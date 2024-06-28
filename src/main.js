@@ -123,10 +123,10 @@ scene("game", () => {
 	};
 
 	//player collision with pipes
-	//player.onCollide("pipe", ()=> {
-		//go("lose", score);
-		//addKaboom(player.pos);
-	//});
+	player.onCollide("pipe", ()=> {
+		go("lose", score);
+		addKaboom(player.pos);
+	});
 
 	//player touches ground after game starts
 	player.onCollide("floor", ()=> {
