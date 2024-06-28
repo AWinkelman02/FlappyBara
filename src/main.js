@@ -122,7 +122,7 @@ scene("game", () => {
 		]);
 	};
 
-	//player collision with pipes
+	//player collision with pipes 
 	player.onCollide("pipe", ()=> {
 		go("lose", score);
 		addKaboom(player.pos);
