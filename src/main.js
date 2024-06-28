@@ -1,9 +1,9 @@
 import kaboom from "kaboom"
 
 const FLOOR_HEIGHT = 48;
-const OBSTACLE_MIN = 60;
+const OBSTACLE_MIN = 84;
 const OBSTACLE_OPENING = 240;
-const OBSTACLE_WIDTH = 84;
+const OBSTACLE_WIDTH = 60;
 const CEILING = -60;
 const SPEED = 480;
 
@@ -15,7 +15,42 @@ loadSprite("bean", "sprites/bean.png")
 setGravity(2600)
 
 scene("start", () => {
+	onUpdate(() => setCursor("default"));
 
+	function addButton(txt, f){
+		const btn = add([
+			rect(240, 80, { radius: 8 }),
+			pos(width() / 2, height() / 2),
+			area(),
+			scale(1),
+			anchor("center"),
+			outline(4),
+		]);
+
+		btn.add([
+			text(txt),
+			anchor("center"),
+			color(0, 0, 0),
+		]);
+
+		btn.onHoverUpdate(() => {
+			const t = time() * 10
+			btn.color = hsl2rgb((t / 10) % 1, 0.6, 0.7)
+			btn.scale = vec2(1.2)
+			setCursor("pointer")
+		});
+
+		btn.onHoverEnd(() => {
+			btn.scale = vec2(1)
+			btn.color = rgb()
+		});
+
+		btn.onClick(f)
+
+		return btn
+	};
+
+	addButton("Start", () => go("game"));
 });
 
 scene("game", () => {
@@ -24,7 +59,7 @@ scene("game", () => {
 		sprite("bean"),
 		pos(width() / 4, height() - FLOOR_HEIGHT*2),
 		area(),
-		body(),
+		//body(),
 		{ moved: false },
 	]);
 
@@ -62,7 +97,7 @@ scene("game", () => {
 
 		add([
 			pos(width(), 0),
-			rect(OBSTACLE_WIDTH, p1),
+			rect(OBSTACLE_WIDTH, p1), //OBSTACLE_WIDTH, p1
 			color(0, 127, 255),
 			outline(4),
 			area(),
@@ -73,7 +108,7 @@ scene("game", () => {
 
 		add([
 			pos(width(), height() - FLOOR_HEIGHT),
-			rect(OBSTACLE_WIDTH, p2),
+			rect(OBSTACLE_WIDTH, p2), //OBSTACLE_WIDTH, p2
 			color(0, 127, 255),
 			anchor("botleft"),
 			outline(4),
@@ -86,10 +121,10 @@ scene("game", () => {
 	};
 
 	//player collision with pipes
-	player.onCollide("pipe", ()=> {
-		go("lose", score);
-		addKaboom(player.pos);
-	});
+	//player.onCollide("pipe", ()=> {
+		//go("lose", score);
+		//addKaboom(player.pos);
+	//});
 
 	//player touches ground after game starts
 	player.onCollide("floor", ()=> {
@@ -115,7 +150,7 @@ scene("game", () => {
 	});
 
 	//spawn a pipe every 1 sec
-	loop(1.3, () => {
+	loop(1.1, () => {
 		spawnObsactle()
 	});
 
@@ -159,4 +194,4 @@ scene("lose", (score) => {
 
 })
 
-go("game")
+go("start")
