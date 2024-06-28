@@ -9,6 +9,8 @@ const SPEED = 480;
 
 kaboom()
 
+setBackground(84, 255, 244)
+
 loadSprite("bean", "sprites/bean.png")
 
 // define gravity
