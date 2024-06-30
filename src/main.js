@@ -3,15 +3,41 @@ import kaboom from "kaboom"
 const FLOOR_HEIGHT = 48;
 const OBSTACLE_MIN = 84;
 const OBSTACLE_OPENING = 240;
-const OBSTACLE_WIDTH = 60;
+const OBSTACLE_WIDTH = 84;
 const CEILING = -60;
-const SPEED = 480;
+const SPEED = 300;
 
 kaboom()
 
 setBackground(84, 255, 244)
 
-loadSprite("bean", "sprites/bean.png")
+loadSprite("grass", "assets/grass.png");
+
+loadSpriteAtlas("sprites/Capybara.png", {
+	'capy1': {
+		x: 0,
+		y: 0,
+		width: 486,
+		height: 76,
+		sliceX: 6,
+		anims: {
+			'fly': { from: 0, to: 5, speed: 23} //23 13
+		},
+	}
+});
+
+loadSpriteAtlas("sprites/capybara - medium fly.png", {
+	'capy2': {
+		x: 0,
+		y: 0,
+		width: 405,
+		height: 76,
+		sliceX: 5,
+		anims: {
+			'fly': { from: 0, to: 4, speed: 23}
+		},
+	}
+});
 
 // define gravity
 setGravity(2600)
@@ -55,27 +81,34 @@ scene("start", () => {
 	addButton("Start", () => go("game"));
 });
 
-scene("game", () => {
-
+scene("chartest", () => {
 	const player = add([
-		sprite("bean"),
-		pos(width() / 4, height() - FLOOR_HEIGHT*2),
+		pos(width() / 2 , height() / 2),
+		sprite("capy1"),
 		area(),
-		//body(),
-		{ moved: false },
+		body(),
 	]);
+
+	console.log(width()); //2560
+
+	//get width
+	//divide by tile size
+	//loop through and tile necesary number of tiles to fit screen
 
 	//floor
-	add([
-		rect(width(), FLOOR_HEIGHT),
-		outline(4),
-		pos(0, height()),
-		anchor("botleft"),
-		area(),
-		body({isStatic: true}),
-		color(127, 200, 255),
-		"floor",
-	]);
+	let tileAmount = width() / 48;
+	console.log(tileAmount);
+	for(let i = 0; i < tileAmount; i++){
+		add([
+			sprite("grass"),
+			pos(i * 48, height()),
+			anchor("botleft"),
+			area(),
+			body({isStatic: true}),
+			color(127, 200, 255),
+			"floor",
+		]);
+	}
 
 	//player inputs
 	onKeyPress("space", () => {
@@ -85,11 +118,58 @@ scene("game", () => {
 
 	onClick(() => {
 		player.jump();
+		player.play('fly')
 		player.moved = true;
 	});
 
 	onKeyPress("up", () => {
 		player.jump();
+		player.moved = true;
+	});
+
+});
+
+scene("game", () => {
+
+	const player = add([
+		sprite("capy1"),
+		pos(width() / 4, height() - FLOOR_HEIGHT*2.1),
+		area(),
+		body(),
+		{ moved: false },
+	]);
+
+	//floor
+	let tileAmount = width() / 48;
+	console.log(tileAmount);
+	for(let i = 0; i < tileAmount; i++){
+		add([
+			sprite("grass"),
+			pos(i * 48, height()),
+			anchor("botleft"),
+			area(),
+			body({isStatic: true}),
+			color(127, 200, 255),
+			"floor",
+		]);
+	}
+
+	//player inputs
+	onKeyPress("space", () => {
+		player.jump();
+		player.play('fly')
+		player.moved = true;
+	});
+
+	onClick(() => {
+		player.jump();
+		player.play('fly')
+		player.moved = true;
+	});
+
+	onKeyPress("up", () => {
+		player.jump();
+		player.play('fly')
 		player.moved = true;
 	});
 
@@ -152,7 +232,7 @@ scene("game", () => {
 	});
 
 	//spawn a pipe every 1 sec
-	loop(1.1, () => {
+	loop(1.3, () => {
 		spawnObsactle()
 	});
 
@@ -176,9 +256,9 @@ scene("game", () => {
 scene("lose", (score) => {
 
 	add([
-		sprite("bean"),
+		sprite("capy1"),
 		pos(width() / 2, height() / 2 - 108),
-		scale(3),
+		scale(2),
 		anchor("center"),
 	])
 
