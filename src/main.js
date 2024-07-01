@@ -1,10 +1,11 @@
 import kaboom from "kaboom"
-import { bambooType } from "./bamboo.js"
+import { bambooBaseType, bambooLeafType, createLamp } from "./bamboo.js"
 
 const FLOOR_HEIGHT = 48;
 const TILE_HEIGHT = 120;
 const CEILING = -60;
 const SPEED = 300;
+const OFFSET_OFFSCREEN = 95;
 
 kaboom()
 
@@ -12,7 +13,8 @@ setBackground(102, 207, 46)
 
 loadSprite("grass", "assets/grass block.png");
 loadSprite("grass trim", "assets/grass trim.png");
-loadSprite("background", "assets/background.png");;
+loadSprite("background", "assets/background.png");
+loadSprite("lamp", "assets/lamp.png");;
 
 loadSpriteAtlas("sprites/capybara.png", {
 	'capy': {
@@ -73,6 +75,30 @@ loadSpriteAtlas("assets/bamboo.png", {
 	
 });
 
+loadSpriteAtlas("assets/bamboo leaves.png", {
+	'l1': {
+		x: 0,
+		y: 0,
+		width: 113,
+		height: 120,
+		sliceX: 1,
+	},
+	'l2': {
+		x: 113,
+		y: 0,
+		width: 113,
+		height: 120,
+		sliceX: 1,
+	},
+	'l3': {
+		x: 226,
+		y: 0,
+		width: 113,
+		height: 120,
+		sliceX: 1,
+	},
+});
+
 // define gravity
 setGravity(3200)
 
@@ -112,7 +138,7 @@ scene("start", () => {
 		return btn
 	};
 
-	addButton("Start", () => go("chartest"));
+	addButton("Start", () => go("game"));
 });
 
 scene("chartest", () => {
@@ -158,32 +184,38 @@ scene("chartest", () => {
 	
 	function spawnObsactle(){
 		let obsTileAmount = Math.ceil(height() / 120);
+		console.log(obsTileAmount)
 		let beginOpening = Math.ceil(rand(2, obsTileAmount - 3))
+		let lampLevel = obsTileAmount - 1;
 
 		for (let i = 1; i <= obsTileAmount; i++) {
 			if(i === 1){
 				add([
-					pos(width()/2 , height() - TILE_HEIGHT * i - FLOOR_HEIGHT),
+					pos(width() + OFFSET_OFFSCREEN, height() - TILE_HEIGHT * i - FLOOR_HEIGHT),
 					sprite("b1"),
 					area(),
-					//move(LEFT, SPEED),
+					move(LEFT, SPEED),
 					offscreen({ destroy: true }),
 					z(2),
 					"pipe",
 					{ passed: false },
 				]);
+				bambooLeafType(i);
 			} else if(i != beginOpening && i != beginOpening + 1){
-				bambooType(i);
+				bambooBaseType(i);
+				bambooLeafType(i);
+				if(i === lampLevel){
+					createLamp(i);
+				}
 			}
 		}
-
 	};
 
 	//spawn a pipe every 1 sec
 	loop(1.3, () => {
-		//spawnObsactle()
+		spawnObsactle()
 	});
-	spawnObsactle()
+	//spawnObsactle()
 
 	//player inputs
 	onKeyPress("space", () => {
@@ -205,6 +237,8 @@ scene("chartest", () => {
 });
 
 scene("game", () => {
+	let obsTileAmount = Math.ceil(height() / 120);
+	let timing = obsTileAmount * 0.1625;
 
 	const player = add([
 		pos(width() / 3 , height() - FLOOR_HEIGHT - 64),
@@ -264,16 +298,14 @@ scene("game", () => {
 	});
 
 	function spawnObsactle(){
-		let obsTileAmount = Math.ceil(height() / 120);
-		
-		let beginOpening = Math.ceil(rand(2, obsTileAmount - 3))
-		console.log(Math.ceil(beginOpening))
+		let beginOpening = Math.ceil(rand(1, obsTileAmount - 3))
+		let lampLevel = obsTileAmount - 1;
 
 		for (let i = 1; i <= obsTileAmount; i++) {
 			if(i === 1){
 				add([
-					pos(width() / 2, height() - TILE_HEIGHT * i - FLOOR_HEIGHT),
-					sprite("bamboo"),
+					pos(width() + OFFSET_OFFSCREEN, height() - TILE_HEIGHT * i - FLOOR_HEIGHT),
+					sprite("b1"),
 					area(),
 					move(LEFT, SPEED),
 					offscreen({ destroy: true }),
@@ -281,16 +313,13 @@ scene("game", () => {
 					"pipe",
 					{ passed: false },
 				]);
+				bambooLeafType(i);
 			} else if(i != beginOpening && i != beginOpening + 1){
-				add([
-					pos(width(), height() - TILE_HEIGHT * i - FLOOR_HEIGHT),
-					sprite("bamboo"),
-					area(),
-					move(LEFT, SPEED),
-					offscreen({ destroy: true }),
-					z(2),
-					"pipe",
-				]);
+				bambooBaseType(i);
+				bambooLeafType(i);
+				if(i === lampLevel){
+					createLamp(i);
+				}
 			}
 		}
 
@@ -327,7 +356,7 @@ scene("game", () => {
 	});
 
 	//spawn a pipe every 1 sec
-	loop(1.3, () => {
+	loop(timing, () => {
 		spawnObsactle()
 	});
 
