@@ -1,20 +1,21 @@
 import kaboom from "kaboom"
+import { bambooType } from "./bamboo.js"
 
 const FLOOR_HEIGHT = 48;
-const OBSTACLE_MIN = 84;
-const OBSTACLE_OPENING = 240;
-const OBSTACLE_WIDTH = 84;
+const TILE_HEIGHT = 120;
 const CEILING = -60;
 const SPEED = 300;
 
 kaboom()
 
-setBackground(84, 255, 244)
+setBackground(102, 207, 46)
 
-loadSprite("grass", "assets/grass.png");
+loadSprite("grass", "assets/grass block.png");
+loadSprite("grass trim", "assets/grass trim.png");
+loadSprite("background", "assets/background.png");;
 
-loadSpriteAtlas("sprites/Capybara.png", {
-	'capy1': {
+loadSpriteAtlas("sprites/capybara.png", {
+	'capy': {
 		x: 0,
 		y: 0,
 		width: 486,
@@ -26,21 +27,54 @@ loadSpriteAtlas("sprites/Capybara.png", {
 	}
 });
 
-loadSpriteAtlas("sprites/capybara - medium fly.png", {
-	'capy2': {
+loadSpriteAtlas("assets/bamboo.png", {
+	'b1': {
 		x: 0,
 		y: 0,
-		width: 405,
-		height: 76,
-		sliceX: 5,
-		anims: {
-			'fly': { from: 0, to: 4, speed: 23}
-		},
-	}
+		width: 45,
+		height: 120,
+		sliceX: 1,
+	},
+	'b2': {
+		x: 45,
+		y: 0,
+		width: 45,
+		height: 120,
+		sliceX: 1,
+	},
+	'b3': {
+		x: 90,
+		y: 0,
+		width: 45,
+		height: 120,
+		sliceX: 1,
+	},
+	'b4': {
+		x: 135,
+		y: 0,
+		width: 45,
+		height: 120,
+		sliceX: 1,
+	},
+	'b5': {
+		x: 180,
+		y: 0,
+		width: 45,
+		height: 120,
+		sliceX: 1,
+	},
+	'b6': {
+		x: 225,
+		y: 0,
+		width: 45,
+		height: 120,
+		sliceX: 1,
+	},
+	
 });
 
 // define gravity
-setGravity(2600)
+setGravity(3200)
 
 scene("start", () => {
 	onUpdate(() => setCursor("default"));
@@ -78,26 +112,28 @@ scene("start", () => {
 		return btn
 	};
 
-	addButton("Start", () => go("game"));
+	addButton("Start", () => go("chartest"));
 });
 
 scene("chartest", () => {
 	const player = add([
-		pos(width() / 2 , height() / 2),
-		sprite("capy1"),
+		pos(width() / 3 , height() / 2),
+		sprite("capy"),
 		area(),
 		body(),
+		z(1),
 	]);
 
-	console.log(width()); //2560
+	add([
+	  sprite("background", {width: width(), height: height()}),
+	  pos(width() / 2, height() / 2),
+	  anchor("center"),
+	  scale(1),
+	  fixed()
+	]);
 
-	//get width
-	//divide by tile size
-	//loop through and tile necesary number of tiles to fit screen
-
-	//floor
+	//floor and trim
 	let tileAmount = width() / 48;
-	console.log(tileAmount);
 	for(let i = 0; i < tileAmount; i++){
 		add([
 			sprite("grass"),
@@ -105,10 +141,49 @@ scene("chartest", () => {
 			anchor("botleft"),
 			area(),
 			body({isStatic: true}),
-			color(127, 200, 255),
+			z(100),
+			"floor",
+		]);
+
+		add([
+			sprite("grass trim"),
+			pos(i * 48, height() - FLOOR_HEIGHT + 6),
+			anchor("botleft"),
+			z(100),
 			"floor",
 		]);
 	}
+
+	//obstacles
+	
+	function spawnObsactle(){
+		let obsTileAmount = Math.ceil(height() / 120);
+		let beginOpening = Math.ceil(rand(2, obsTileAmount - 3))
+
+		for (let i = 1; i <= obsTileAmount; i++) {
+			if(i === 1){
+				add([
+					pos(width()/2 , height() - TILE_HEIGHT * i - FLOOR_HEIGHT),
+					sprite("b1"),
+					area(),
+					//move(LEFT, SPEED),
+					offscreen({ destroy: true }),
+					z(2),
+					"pipe",
+					{ passed: false },
+				]);
+			} else if(i != beginOpening && i != beginOpening + 1){
+				bambooType(i);
+			}
+		}
+
+	};
+
+	//spawn a pipe every 1 sec
+	loop(1.3, () => {
+		//spawnObsactle()
+	});
+	spawnObsactle()
 
 	//player inputs
 	onKeyPress("space", () => {
@@ -132,16 +207,23 @@ scene("chartest", () => {
 scene("game", () => {
 
 	const player = add([
-		sprite("capy1"),
-		pos(width() / 4, height() - FLOOR_HEIGHT*2.1),
+		pos(width() / 3 , height() - FLOOR_HEIGHT - 64),
+		sprite("capy"),
 		area(),
 		body(),
-		{ moved: false },
+		z(1),
 	]);
 
-	//floor
+	add([
+	  sprite("background", {width: width(), height: height()}),
+	  pos(width() / 2, height() / 2),
+	  anchor("center"),
+	  scale(1),
+	  fixed()
+	]);
+
+	//floor and trim
 	let tileAmount = width() / 48;
-	console.log(tileAmount);
 	for(let i = 0; i < tileAmount; i++){
 		add([
 			sprite("grass"),
@@ -149,7 +231,15 @@ scene("game", () => {
 			anchor("botleft"),
 			area(),
 			body({isStatic: true}),
-			color(127, 200, 255),
+			z(100),
+			"floor",
+		]);
+
+		add([
+			sprite("grass trim"),
+			pos(i * 48, height() - FLOOR_HEIGHT + 6),
+			anchor("botleft"),
+			z(100),
 			"floor",
 		]);
 	}
@@ -174,33 +264,38 @@ scene("game", () => {
 	});
 
 	function spawnObsactle(){
-		const p1 = rand(OBSTACLE_MIN, height() - OBSTACLE_MIN - OBSTACLE_OPENING);
-		const p2 = height() - p1 - OBSTACLE_OPENING - FLOOR_HEIGHT;
+		let obsTileAmount = Math.ceil(height() / 120);
+		
+		let beginOpening = Math.ceil(rand(2, obsTileAmount - 3))
+		console.log(Math.ceil(beginOpening))
 
-		add([
-			pos(width(), 0),
-			rect(OBSTACLE_WIDTH, p1), //OBSTACLE_WIDTH, p1
-			color(0, 127, 255),
-			outline(4),
-			area(),
-			move(LEFT, SPEED),
-			offscreen({ destroy: true }),
-			"pipe",
-		]);
+		for (let i = 1; i <= obsTileAmount; i++) {
+			if(i === 1){
+				add([
+					pos(width() / 2, height() - TILE_HEIGHT * i - FLOOR_HEIGHT),
+					sprite("bamboo"),
+					area(),
+					move(LEFT, SPEED),
+					offscreen({ destroy: true }),
+					z(2),
+					"pipe",
+					{ passed: false },
+				]);
+			} else if(i != beginOpening && i != beginOpening + 1){
+				add([
+					pos(width(), height() - TILE_HEIGHT * i - FLOOR_HEIGHT),
+					sprite("bamboo"),
+					area(),
+					move(LEFT, SPEED),
+					offscreen({ destroy: true }),
+					z(2),
+					"pipe",
+				]);
+			}
+		}
 
-		add([
-			pos(width(), height() - FLOOR_HEIGHT),
-			rect(OBSTACLE_WIDTH, p2), //OBSTACLE_WIDTH, p2
-			color(0, 127, 255),
-			anchor("botleft"),
-			outline(4),
-			area(),
-			move(LEFT, SPEED),
-			offscreen({ destroy: true }),
-			"pipe",
-			{ passed: false },
-		]);
 	};
+	
 
 	//player collision with pipes 
 	player.onCollide("pipe", ()=> {
@@ -256,7 +351,7 @@ scene("game", () => {
 scene("lose", (score) => {
 
 	add([
-		sprite("capy1"),
+		sprite("capy"),
 		pos(width() / 2, height() / 2 - 108),
 		scale(2),
 		anchor("center"),
