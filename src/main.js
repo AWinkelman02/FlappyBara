@@ -3,7 +3,7 @@ import { bambooBaseType, bambooLeafType, createLamp } from "./bamboo.js"
 
 const FLOOR_HEIGHT = 48;
 const TILE_HEIGHT = 120;
-const CEILING = -60;
+const CEILING = -130;
 const SPEED = 300;
 const OFFSET_OFFSCREEN = 95;
 
@@ -14,7 +14,8 @@ setBackground(102, 207, 46)
 loadSprite("grass", "assets/grass block.png");
 loadSprite("grass trim", "assets/grass trim.png");
 loadSprite("background", "assets/background.png");
-loadSprite("lamp", "assets/lamp.png");;
+loadSprite("title", "assets/fonts/title.png");
+loadSprite("lamp", "assets/lamp.png");
 
 loadSpriteAtlas("sprites/capybara.png", {
 	'capy': {
@@ -26,7 +27,7 @@ loadSpriteAtlas("sprites/capybara.png", {
 		anims: {
 			'fly': { from: 0, to: 5, speed: 23} //23 13
 		},
-	}
+	},
 });
 
 loadSpriteAtlas("assets/bamboo.png", {
@@ -99,55 +100,105 @@ loadSpriteAtlas("assets/bamboo leaves.png", {
 	},
 });
 
+loadFont("pixelify", "assets/fonts/PixelifySans-Medium.ttf")
+
 // define gravity
-setGravity(3200)
+setGravity(0)
 
 scene("start", () => {
 	onUpdate(() => setCursor("default"));
 
-	function addButton(txt, f){
-		const btn = add([
-			rect(240, 80, { radius: 8 }),
-			pos(width() / 2, height() / 2),
-			area(),
-			scale(1),
-			anchor("center"),
-			outline(4),
-		]);
+	add([
+		sprite("background", {width: width(), height: height()}),
+		pos(width() / 2, height() / 2),
+		anchor("center"),
+		scale(1),
+		fixed()
+	]);
 
-		btn.add([
-			text(txt),
-			anchor("center"),
-			color(0, 0, 0),
-		]);
+	add([
+		sprite("title"),
+		pos(width() / 2, height() / 4),
+		anchor("center"),
+		scale(1.5),
+		fixed()
+	]);
 
-		btn.onHoverUpdate(() => {
-			const t = time() * 10
-			btn.color = hsl2rgb((t / 10) % 1, 0.6, 0.7)
-			btn.scale = vec2(1.2)
-			setCursor("pointer")
-		});
+	const btnStart = add([
+		rect(240, 80, { radius: 8 }),
+		pos(width() / 2, height() / 1.9),
+		area(),
+		scale(1),
+		anchor("center"),
+		outline(4),
+	]);
 
-		btn.onHoverEnd(() => {
-			btn.scale = vec2(1)
-			btn.color = rgb()
-		});
+	btnStart.add([
+		text("Start", {
+			font: "Pixelify"
+		}),
+		anchor("center"),
+		color(0, 0, 0),
+	]);
 
-		btn.onClick(f)
+	btnStart.onHoverUpdate(() => {
+		const t = time() * 10
+		btnStart.color = hsl2rgb((t / 10) % 1, 0.6, 0.7)
+		btnStart.scale = vec2(1.2)
+		setCursor("pointer")
+	});
 
-		return btn
-	};
+	btnStart.onHoverEnd(() => {
+		btnStart.scale = vec2(1)
+		btnStart.color = rgb()
+	});
 
-	addButton("Start", () => go("game"));
+	btnStart.onClick(() => go("game"))
+
+	const btnLeader = add([
+		rect(240, 80, { radius: 8 }),
+		pos(width() / 2, height() / 1.5),
+		area(),
+		scale(1),
+		anchor("center"),
+		outline(4),
+	]);
+
+	btnLeader.add([
+		text("Scoreboard", {
+			font: "Pixelify"
+		}),
+		anchor("center"),
+		color(0, 0, 0),
+	]);
+
+	btnLeader.onHoverUpdate(() => {
+		const t = time() * 10
+		btnLeader.color = hsl2rgb((t / 10) % 1, 0.6, 0.7)
+		btnLeader.scale = vec2(1.2)
+		setCursor("pointer")
+	});
+
+	btnLeader.onHoverEnd(() => {
+		btnLeader.scale = vec2(1)
+		btnLeader.color = rgb()
+	});
+
+	btnLeader.onClick(() => go("lose", 0))
 });
 
 scene("chartest", () => {
-	const player = add([
-		pos(width() / 3 , height() / 2),
+	// define gravity
+	setGravity(0)
+
+	let player = add([
+		pos(width() / 3, height() / 3),
 		sprite("capy"),
 		area(),
 		body(),
 		z(1),
+		{ moved: false },
+		"capy",
 	]);
 
 	add([
@@ -158,7 +209,7 @@ scene("chartest", () => {
 	  fixed()
 	]);
 
-	//floor and trim
+	//initialize floor and trim
 	let tileAmount = width() / 48;
 	for(let i = 0; i < tileAmount; i++){
 		add([
@@ -168,6 +219,8 @@ scene("chartest", () => {
 			area(),
 			body({isStatic: true}),
 			z(100),
+			move(LEFT, SPEED),
+			offscreen({ destroy: true }),
 			"floor",
 		]);
 
@@ -176,76 +229,151 @@ scene("chartest", () => {
 			pos(i * 48, height() - FLOOR_HEIGHT + 6),
 			anchor("botleft"),
 			z(100),
+			move(LEFT, SPEED),
+			offscreen({ destroy: true }),
 			"floor",
 		]);
+	}
+
+	//build more floor and trim
+	function spawnFloor(){
+		let tileAmount = width() / 48;
+		for(let i = 0; i < tileAmount; i++){
+			add([
+				sprite("grass"),
+				pos(width() - 2 + i * 48, height()),
+				anchor("botleft"),
+				area(),
+				body({isStatic: true}),
+				z(100),
+				move(LEFT, SPEED),
+				offscreen({ destroy: true }),
+				"floor",
+			]);
+	
+			add([
+				sprite("grass trim"),
+				pos(width() - 2 + i * 48, height() - FLOOR_HEIGHT + 6),
+				anchor("botleft"),
+				z(100),
+				move(LEFT, SPEED),
+				offscreen({ destroy: true }),
+				"floor",
+			]);
+		}
 	}
 
 	//obstacles
 	
 	function spawnObsactle(){
-		let obsTileAmount = Math.ceil(height() / 120);
-		console.log(obsTileAmount)
-		let beginOpening = Math.ceil(rand(2, obsTileAmount - 3))
-		let lampLevel = obsTileAmount - 1;
-
-		for (let i = 1; i <= obsTileAmount; i++) {
-			if(i === 1){
-				add([
-					pos(width() + OFFSET_OFFSCREEN, height() - TILE_HEIGHT * i - FLOOR_HEIGHT),
-					sprite("b1"),
-					area(),
-					move(LEFT, SPEED),
-					offscreen({ destroy: true }),
-					z(2),
-					"pipe",
-					{ passed: false },
-				]);
-				bambooLeafType(i);
-			} else if(i != beginOpening && i != beginOpening + 1){
-				bambooBaseType(i);
-				bambooLeafType(i);
-				if(i === lampLevel){
-					createLamp(i);
+		if(player.moved === true){
+			let obsTileAmount = Math.ceil(height() / 120);
+			let beginOpening = Math.ceil(rand(2, obsTileAmount - 3))
+			let lampLevel = obsTileAmount - 1;
+	
+			for (let i = 1; i <= obsTileAmount; i++) {
+				if(i === 1){
+					add([
+						pos(width() + OFFSET_OFFSCREEN, height() - TILE_HEIGHT * i - FLOOR_HEIGHT),
+						sprite("b1"),
+						area(),
+						move(LEFT, SPEED),
+						offscreen({ destroy: true }),
+						z(2),
+						"pipe",
+						{ passed: false },
+					]);
+					bambooLeafType(i);
+				} else if(i != beginOpening && i != beginOpening + 1){
+					bambooBaseType(i);
+					bambooLeafType(i);
+					if(i === lampLevel){
+						createLamp(i);
+					}
 				}
 			}
 		}
 	};
 
-	//spawn a pipe every 1 sec
+	//spawn a pipe every x sec
 	loop(1.3, () => {
 		spawnObsactle()
 	});
 	//spawnObsactle()
 
+	//spawn a floor every x sec
+	loop(.8, () => {
+		spawnFloor()
+	});
+
+
+
 	//player inputs
 	onKeyPress("space", () => {
-		player.jump();
-		player.moved = true;
+		if(player.moved === false){
+			setGravity(3200)
+			player.moved = true;
+			player.jump();
+			player.play('fly')
+		} else {
+			player.jump();
+			player.play('fly')
+		}
 	});
 
 	onClick(() => {
-		player.jump();
-		player.play('fly')
-		player.moved = true;
+		if(player.moved === false){
+			setGravity(3200)
+			player.moved = true;
+			player.jump();
+			player.play('fly')
+		} else {
+			player.jump();
+			player.play('fly')
+		}
 	});
 
 	onKeyPress("up", () => {
-		player.jump();
-		player.moved = true;
+		if(player.moved === false){
+			setGravity(3200)
+			player.moved = true;
+			player.jump();
+			player.play('fly')
+		} else {
+			player.jump();
+			player.play('fly')
+		}
 	});
 
+	//player idle animation
+	onLoad(() => {
+		if(player.moved === false){
+			player.play('fly');
+		}
+	});
+	
+	loop(.45, () => {
+		if(player.moved === false){
+			player.play('fly');
+		}
+	});
 });
 
 scene("game", () => {
+	// define gravity
+	setGravity(0)
+
 	let obsTileAmount = Math.ceil(height() / 120);
 	let timing = obsTileAmount * 0.1625;
 
 	const player = add([
-		pos(width() / 3 , height() - FLOOR_HEIGHT - 64),
+		pos(width() / 3, height() / 3),
 		sprite("capy"),
 		area(),
 		body(),
 		z(1),
+		{ moved: false },
+		"capy",
 	]);
 
 	add([
@@ -256,7 +384,7 @@ scene("game", () => {
 	  fixed()
 	]);
 
-	//floor and trim
+	//initialize floor and trim
 	let tileAmount = width() / 48;
 	for(let i = 0; i < tileAmount; i++){
 		add([
@@ -266,6 +394,8 @@ scene("game", () => {
 			area(),
 			body({isStatic: true}),
 			z(100),
+			move(LEFT, SPEED),
+			offscreen({ destroy: true }),
 			"floor",
 		]);
 
@@ -274,58 +404,107 @@ scene("game", () => {
 			pos(i * 48, height() - FLOOR_HEIGHT + 6),
 			anchor("botleft"),
 			z(100),
+			move(LEFT, SPEED),
+			offscreen({ destroy: true }),
 			"floor",
 		]);
 	}
 
+	//build more floor and trim
+	function spawnFloor(){
+		let tileAmount = width() / 48;
+		for(let i = 0; i < tileAmount; i++){
+			add([
+				sprite("grass"),
+				pos(width() - 2 + i * 48, height()),
+				anchor("botleft"),
+				area(),
+				body({isStatic: true}),
+				z(100),
+				move(LEFT, SPEED),
+				offscreen({ destroy: true }),
+				"floor",
+			]);
+	
+			add([
+				sprite("grass trim"),
+				pos(width() - 2 + i * 48, height() - FLOOR_HEIGHT + 6),
+				anchor("botleft"),
+				z(100),
+				move(LEFT, SPEED),
+				offscreen({ destroy: true }),
+				"floor",
+			]);
+		}
+	}
+
 	//player inputs
 	onKeyPress("space", () => {
-		player.jump();
-		player.play('fly')
-		player.moved = true;
+		if(player.moved === false){
+			setGravity(3200)
+			player.moved = true;
+			player.jump();
+			player.play('fly')
+		} else {
+			player.jump();
+			player.play('fly')
+		}
 	});
 
 	onClick(() => {
-		player.jump();
-		player.play('fly')
-		player.moved = true;
+		if(player.moved === false){
+			setGravity(3200)
+			player.moved = true;
+			player.jump();
+			player.play('fly')
+		} else {
+			player.jump();
+			player.play('fly')
+		}
 	});
 
 	onKeyPress("up", () => {
-		player.jump();
-		player.play('fly')
-		player.moved = true;
+		if(player.moved === false){
+			setGravity(3200)
+			player.moved = true;
+			player.jump();
+			player.play('fly')
+		} else {
+			player.jump();
+			player.play('fly')
+		}
 	});
 
 	function spawnObsactle(){
-		let beginOpening = Math.ceil(rand(1, obsTileAmount - 3))
-		let lampLevel = obsTileAmount - 1;
-
-		for (let i = 1; i <= obsTileAmount; i++) {
-			if(i === 1){
-				add([
-					pos(width() + OFFSET_OFFSCREEN, height() - TILE_HEIGHT * i - FLOOR_HEIGHT),
-					sprite("b1"),
-					area(),
-					move(LEFT, SPEED),
-					offscreen({ destroy: true }),
-					z(2),
-					"pipe",
-					{ passed: false },
-				]);
-				bambooLeafType(i);
-			} else if(i != beginOpening && i != beginOpening + 1){
-				bambooBaseType(i);
-				bambooLeafType(i);
-				if(i === lampLevel){
-					createLamp(i);
+		if(player.moved === true){
+			let obsTileAmount = Math.ceil(height() / 120);
+			let beginOpening = Math.ceil(rand(2, obsTileAmount - 3))
+			let lampLevel = obsTileAmount - 1;
+	
+			for (let i = 1; i <= obsTileAmount; i++) {
+				if(i === 1){
+					add([
+						pos(width() + OFFSET_OFFSCREEN, height() - TILE_HEIGHT * i - FLOOR_HEIGHT),
+						sprite("b1"),
+						area(),
+						move(LEFT, SPEED),
+						offscreen({ destroy: true }),
+						z(2),
+						"pipe",
+						{ passed: false },
+					]);
+					bambooLeafType(i);
+				} else if(i != beginOpening && i != beginOpening + 1){
+					bambooBaseType(i);
+					bambooLeafType(i);
+					if(i === lampLevel){
+						createLamp(i);
+					}
 				}
 			}
 		}
-
 	};
 	
-
 	//player collision with pipes 
 	player.onCollide("pipe", ()=> {
 		go("lose", score);
@@ -360,6 +539,24 @@ scene("game", () => {
 		spawnObsactle()
 	});
 
+	//spawn a floor every x sec
+	loop(.79, () => {
+		spawnFloor()
+	});
+
+	//player idle animation
+	onLoad(() => {
+		if(player.moved === false){
+			player.play('fly');
+		}
+	});
+	
+	loop(.45, () => {
+		if(player.moved === false){
+			player.play('fly');
+		}
+	});
+
 	//updating score
 	let score = 0;
 
@@ -381,22 +578,67 @@ scene("lose", (score) => {
 
 	add([
 		sprite("capy"),
-		pos(width() / 2, height() / 2 - 108),
+		pos(width() / 4, height() / 2 - 108),
 		scale(2),
 		anchor("center"),
+		z(10),
 	])
 
-	// display score
+	add([
+		sprite("background", {width: width(), height: height()}),
+		pos(width() / 2, height() / 2),
+		anchor("center"),
+		scale(1),
+		fixed()
+	]);
+
+	//new game
 	add([
 		text(score),
-		pos(width() / 2, height() / 2 + 108),
+		pos(width() / 4, height() / 2 + 108),
 		scale(3),
 		anchor("center"),
 	])
 
-	// go back to game with space is pressed
-	onKeyPress("space", () => go("game"))
-	onClick(() => go("game"))
+	const menu = add([
+		rect(width() / 3, height() / 3, { radius: 8 }),
+		pos(width() / 2, height() / 2),
+		area(),
+		scale(1),
+		anchor("center"),
+		outline(4),
+	])
+
+	const btnStart = add([
+		rect(240, 80, { radius: 8 }),
+		pos(width() / 2, height() / 1.5),
+		area(),
+		scale(1),
+		anchor("center"),
+		outline(4),
+	]);
+
+	btnStart.add([
+		text("Restart", {
+			font: "Pixelify"
+		}),
+		anchor("center"),
+		color(0, 0, 0),
+	]);
+
+	btnStart.onHoverUpdate(() => {
+		const t = time() * 10
+		btnStart.color = hsl2rgb((t / 10) % 1, 0.6, 0.7)
+		btnStart.scale = vec2(1.2)
+		setCursor("pointer")
+	});
+
+	btnStart.onHoverEnd(() => {
+		btnStart.scale = vec2(1)
+		btnStart.color = rgb()
+	});
+
+	btnStart.onClick(() => go("game"))
 
 })
 

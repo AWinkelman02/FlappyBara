@@ -25,3 +25,13 @@ $ npm run bundle
 ```
 
 will build your game and package into a .zip file, you can upload to your server or itch.io / newground etc.
+
+
+
+Features to Add
+-Click to start
+-moving grass
+-pause menu
+-leaderboard and DB
+-personal best
+-start menu
