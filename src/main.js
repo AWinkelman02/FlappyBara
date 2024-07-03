@@ -11,10 +11,11 @@ kaboom()
 
 setBackground(102, 207, 46)
 
-loadSprite("grass", "assets/grass block.png");
-loadSprite("grass trim", "assets/grass trim.png");
 loadSprite("background", "assets/background.png");
 loadSprite("title", "assets/fonts/title.png");
+loadSprite("scorecard", "assets/scorecard.png");
+loadSprite("grass", "assets/grass block.png");
+loadSprite("grass trim", "assets/grass trim.png");
 loadSprite("lamp", "assets/lamp.png");
 
 loadSpriteAtlas("sprites/capybara.png", {
@@ -561,7 +562,9 @@ scene("game", () => {
 	let score = 0;
 
 	const scoreLabel = add([
-		text(score),
+		text(score,{ //score
+			font: "Pixelify"
+		}),
 		anchor("center"),
 		pos(width() / 2, 80),
 		fixed(),
@@ -575,15 +578,6 @@ scene("game", () => {
 })
 
 scene("lose", (score) => {
-
-	add([
-		sprite("capy"),
-		pos(width() / 4, height() / 2 - 108),
-		scale(2),
-		anchor("center"),
-		z(10),
-	])
-
 	add([
 		sprite("background", {width: width(), height: height()}),
 		pos(width() / 2, height() / 2),
@@ -592,33 +586,122 @@ scene("lose", (score) => {
 		fixed()
 	]);
 
-	//new game
-	add([
-		text(score),
-		pos(width() / 4, height() / 2 + 108),
-		scale(3),
-		anchor("center"),
-	])
-
 	const menu = add([
-		rect(width() / 3, height() / 3, { radius: 8 }),
+		sprite("scorecard"),
+		//rect(width() / 3, height() / 3, { radius: 8 }),
 		pos(width() / 2, height() / 2),
 		area(),
 		scale(1),
 		anchor("center"),
+		fixed(),
 		outline(4),
 	])
 
-	const btnStart = add([
-		rect(240, 80, { radius: 8 }),
-		pos(width() / 2, height() / 1.5),
+	let txtScore = add([
+		text(score,{ //score
+			font: "Pixelify"
+		}),
+		pos(width() / 1.6 + 45, height() / 2.3 - 10),
+		scale(2),
+		anchor("right"),
+		color(255, 255, 255),
+		z(10),
+	])
+
+	let txtBest = add([
+		text(0,{ //score
+			font: "Pixelify"
+		}),
+		pos(width() / 1.6 + 45, height() / 1.8),
+		scale(2),
+		anchor("right"),
+		color(255, 255, 255),
+		z(10),
+	])
+
+	let txtInput = add([
+		rect(192, 64, { radius: 8 }),
+		pos(width() / 2 - 200, height() / 2 + 60),
+		area(),
+		scale(1),
+		anchor("center"),
+		color(182, 151, 0),
+	]);
+
+	txtInput.add([
+		text("", {
+			font: "Pixelify"
+		}),
+		input(),
+		anchor("center"),
+		color(255, 255, 255),
+	])
+
+	function input() {
+		let charEv
+		let backEv
+		let maxLength = 8
+
+		return {
+			id: "input",
+			require: ["text"],
+			add() {
+				charEv = onCharInput((character) => {
+					if (this.text.length < maxLength) {
+						this.text += character
+					}
+				})
+				
+				backEv = onKeyPress("backspace", () => {
+					this.text = this.text.slice(0, -1)
+				})
+			},
+			destroy() {
+				charEv.cancel()
+				backEv.cancel()
+			}
+		}
+	}
+
+ 	const btnSubmit = add([
+		rect(192, 64, { radius: 8 }),
+		pos(width() / 2 + 200, height() / 2 + 150),
 		area(),
 		scale(1),
 		anchor("center"),
 		outline(4),
 	]);
 
-	btnStart.add([
+	btnSubmit.add([
+		text("Submit", {
+			font: "Pixelify"
+		}),
+		anchor("center"),
+		color(0, 0, 0),
+	]);
+
+	btnSubmit.onHoverUpdate(() => {
+		const t = time() * 10
+		btnSubmit.color = hsl2rgb((t / 10) % 1, 0.6, 0.7)
+		btnSubmit.scale = vec2(1.2)
+		setCursor("pointer")
+	});
+
+	btnSubmit.onHoverEnd(() => {
+		btnSubmit.scale = vec2(1)
+		btnSubmit.color = rgb()
+	});
+
+	const btnRestart = add([
+		rect(192, 64, { radius: 8 }),
+		pos(width() / 2 - 200, height() / 2 + 280),
+		area(),
+		scale(1),
+		anchor("center"),
+		outline(4),
+	]);
+
+	btnRestart.add([
 		text("Restart", {
 			font: "Pixelify"
 		}),
@@ -626,20 +709,50 @@ scene("lose", (score) => {
 		color(0, 0, 0),
 	]);
 
-	btnStart.onHoverUpdate(() => {
+	btnRestart.onHoverUpdate(() => {
 		const t = time() * 10
-		btnStart.color = hsl2rgb((t / 10) % 1, 0.6, 0.7)
-		btnStart.scale = vec2(1.2)
+		btnRestart.color = hsl2rgb((t / 10) % 1, 0.6, 0.7)
+		btnRestart.scale = vec2(1.2)
 		setCursor("pointer")
 	});
 
-	btnStart.onHoverEnd(() => {
-		btnStart.scale = vec2(1)
-		btnStart.color = rgb()
+	btnRestart.onHoverEnd(() => {
+		btnRestart.scale = vec2(1)
+		btnRestart.color = rgb()
 	});
 
-	btnStart.onClick(() => go("game"))
+	btnRestart.onClick(() => go("game"))
 
+	const btnHome = add([
+		rect(192, 64, { radius: 8 }),
+		pos(width() / 2 + 200, height() / 2 + 280),
+		area(),
+		scale(1),
+		anchor("center"),
+		outline(4),
+	]);
+
+	btnHome.add([
+		text("Home", {
+			font: "Pixelify"
+		}),
+		anchor("center"),
+		color(0, 0, 0),
+	]);
+
+	btnHome.onHoverUpdate(() => {
+		const t = time() * 10
+		btnHome.color = hsl2rgb((t / 10) % 1, 0.6, 0.7)
+		btnHome.scale = vec2(1.2)
+		setCursor("pointer")
+	});
+
+	btnHome.onHoverEnd(() => {
+		btnHome.scale = vec2(1)
+		btnHome.color = rgb()
+	});
+
+	btnHome.onClick(() => go("start"))
 })
 
 go("start")
