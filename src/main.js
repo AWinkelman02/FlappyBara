@@ -1,5 +1,6 @@
 import kaboom from "kaboom"
 import { bambooBaseType, bambooLeafType, createLamp } from "./bamboo.js"
+import { compareScore, saveBestScore, getBestScore } from "./scores.js"
 
 const FLOOR_HEIGHT = 48;
 const TILE_HEIGHT = 120;
@@ -97,6 +98,44 @@ loadSpriteAtlas("assets/bamboo leaves.png", {
 		y: 0,
 		width: 113,
 		height: 120,
+		sliceX: 1,
+	},
+});
+
+loadSpriteAtlas("assets/medals.png", {
+	'bronze': {
+		x: 0,
+		y: 0,
+		width: 85,
+		height: 85,
+		sliceX: 1,
+	},
+	'silver': {
+		x: 85,
+		y: 0,
+		width: 85,
+		height: 85,
+		sliceX: 1,
+	},
+	'gold': {
+		x: 170,
+		y: 0,
+		width: 85,
+		height: 85,
+		sliceX: 1,
+	},
+	'plat': {
+		x: 255,
+		y: 0,
+		width: 85,
+		height: 85,
+		sliceX: 1,
+	},
+	'diamond': {
+		x: 340,
+		y: 0,
+		width: 85,
+		height: 85,
 		sliceX: 1,
 	},
 });
@@ -578,6 +617,15 @@ scene("game", () => {
 })
 
 scene("lose", (score) => {
+	let best = 0;
+	let checkBest = compareScore(score);
+	if( checkBest === "new"){
+		best = score;
+		//add new tag
+	} else {
+		best = getBestScore();
+	}
+
 	add([
 		sprite("background", {width: width(), height: height()}),
 		pos(width() / 2, height() / 2),
@@ -601,7 +649,7 @@ scene("lose", (score) => {
 		text(score,{ //score
 			font: "Pixelify"
 		}),
-		pos(width() / 1.6 + 45, height() / 2.3 - 10),
+		pos(width() / 2 + 285, height() / 2 - 70),
 		scale(2),
 		anchor("right"),
 		color(255, 255, 255),
@@ -609,19 +657,24 @@ scene("lose", (score) => {
 	])
 
 	let txtBest = add([
-		text(0,{ //score
+		text(best,{ //best
 			font: "Pixelify"
 		}),
-		pos(width() / 1.6 + 45, height() / 1.8),
+		pos(width() / 2 + 285, height() / 2 + 50),
 		scale(2),
 		anchor("right"),
 		color(255, 255, 255),
 		z(10),
 	])
 
+	let medal = add([
+		sprite('silver'),
+		pos(width() / 2 - 219, height() / 2 - 57),
+	])
+
 	let txtInput = add([
 		rect(192, 64, { radius: 8 }),
-		pos(width() / 2 - 200, height() / 2 + 60),
+		pos(width() / 2 - 200, height() / 2 + 100),
 		area(),
 		scale(1),
 		anchor("center"),
