@@ -1,6 +1,6 @@
 import kaboom from "kaboom"
 import { bambooBaseType, bambooLeafType, createLamp } from "./bamboo.js"
-import { compareScore, saveBestScore, getBestScore } from "./scores.js"
+import { compareScore, saveBestScore, getBestScore, checkMedal, getMedal } from "./scores.js"
 
 const FLOOR_HEIGHT = 48;
 const TILE_HEIGHT = 120;
@@ -15,6 +15,7 @@ setBackground(102, 207, 46)
 loadSprite("background", "assets/background.png");
 loadSprite("title", "assets/fonts/title.png");
 loadSprite("scorecard", "assets/scorecard.png");
+loadSprite("medal frame", "assets/medal frame.png");
 loadSprite("grass", "assets/grass block.png");
 loadSprite("grass trim", "assets/grass trim.png");
 loadSprite("lamp", "assets/lamp.png");
@@ -138,6 +139,13 @@ loadSpriteAtlas("assets/medals.png", {
 		height: 85,
 		sliceX: 1,
 	},
+	'none': {
+		x: 425,
+		y: 0,
+		width: 85,
+		height: 85,
+		sliceX: 1,
+	},
 });
 
 loadFont("pixelify", "assets/fonts/PixelifySans-Medium.ttf")
@@ -224,7 +232,56 @@ scene("start", () => {
 		btnLeader.color = rgb()
 	});
 
-	btnLeader.onClick(() => go("lose", 0))
+	btnLeader.onClick(() => go("scoreboard", 0))
+});
+
+scene("scoreboard", () => {
+	add([
+		sprite("background", {width: width(), height: height()}),
+		pos(width() / 2, height() / 2),
+		anchor("center"),
+		scale(1),
+		fixed()
+	]);
+
+	const btnHome = add([
+		rect(192, 64, { radius: 8 }),
+		pos(width() / 7, height() / 7),
+		area(),
+		scale(1),
+		anchor("center"),
+		outline(4),
+	]);
+
+	btnHome.add([
+		text("<-", {
+			font: "Pixelify"
+		}),
+		anchor("center"),
+		color(0, 0, 0),
+	]);
+
+	btnHome.onHoverUpdate(() => {
+		const t = time() * 10
+		btnHome.color = hsl2rgb((t / 10) % 1, 0.6, 0.7)
+		btnHome.scale = vec2(1.2)
+		setCursor("pointer")
+	});
+
+	btnHome.onHoverEnd(() => {
+		btnHome.scale = vec2(1)
+		btnHome.color = rgb()
+	});
+
+	btnHome.onClick(() => go("start"))
+
+	add([
+		sprite("medal frame"),
+		pos(width() / 4, height() / 4),
+		anchor("top"),
+		scale(1),
+		fixed()
+	]);
 });
 
 scene("chartest", () => {
@@ -649,7 +706,7 @@ scene("lose", (score) => {
 		text(score,{ //score
 			font: "Pixelify"
 		}),
-		pos(width() / 2 + 285, height() / 2 - 70),
+		pos(width() / 2 + 285, height() / 2 - 155),
 		scale(2),
 		anchor("right"),
 		color(255, 255, 255),
@@ -660,7 +717,7 @@ scene("lose", (score) => {
 		text(best,{ //best
 			font: "Pixelify"
 		}),
-		pos(width() / 2 + 285, height() / 2 + 50),
+		pos(width() / 2 + 285, height() / 2 - 35),
 		scale(2),
 		anchor("right"),
 		color(255, 255, 255),
@@ -668,13 +725,13 @@ scene("lose", (score) => {
 	])
 
 	let medal = add([
-		sprite('silver'),
-		pos(width() / 2 - 219, height() / 2 - 57),
+		sprite(checkMedal(score)),
+		pos(width() / 2 - 218, height() / 2 - 141),
 	])
 
 	let txtInput = add([
 		rect(192, 64, { radius: 8 }),
-		pos(width() / 2 - 200, height() / 2 + 100),
+		pos(width() / 2 + 200, height() / 2 + 120),
 		area(),
 		scale(1),
 		anchor("center"),
@@ -718,7 +775,7 @@ scene("lose", (score) => {
 
  	const btnSubmit = add([
 		rect(192, 64, { radius: 8 }),
-		pos(width() / 2 + 200, height() / 2 + 150),
+		pos(width() / 2 + 200, height() / 2 + 220),
 		area(),
 		scale(1),
 		anchor("center"),
@@ -747,7 +804,7 @@ scene("lose", (score) => {
 
 	const btnRestart = add([
 		rect(192, 64, { radius: 8 }),
-		pos(width() / 2 - 200, height() / 2 + 280),
+		pos(width() / 2 - 200, height() / 2 + 350),
 		area(),
 		scale(1),
 		anchor("center"),
@@ -778,7 +835,7 @@ scene("lose", (score) => {
 
 	const btnHome = add([
 		rect(192, 64, { radius: 8 }),
-		pos(width() / 2 + 200, height() / 2 + 280),
+		pos(width() / 2 + 200, height() / 2 + 350),
 		area(),
 		scale(1),
 		anchor("center"),
