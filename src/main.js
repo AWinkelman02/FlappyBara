@@ -1,6 +1,6 @@
 import kaboom from "kaboom"
 import { bambooBaseType, bambooLeafType, createLamp } from "./bamboo.js"
-import { compareScore, saveBestScore, getBestScore, checkMedal, getMedal } from "./scores.js"
+import { compareScore, getBestScore, checkMedal, getMedal, medalList } from "./scores.js"
 
 const FLOOR_HEIGHT = 48;
 const TILE_HEIGHT = 120;
@@ -16,6 +16,9 @@ loadSprite("background", "assets/background.png");
 loadSprite("title", "assets/fonts/title.png");
 loadSprite("scorecard", "assets/scorecard.png");
 loadSprite("medal frame", "assets/medal frame.png");
+loadSprite("header", "assets/lb header.png");
+loadSprite("row", "assets/lb row.png");
+loadSprite("footer", "assets/lb footer.png");
 loadSprite("grass", "assets/grass block.png");
 loadSprite("grass trim", "assets/grass trim.png");
 loadSprite("lamp", "assets/lamp.png");
@@ -148,6 +151,23 @@ loadSpriteAtlas("assets/medals.png", {
 	},
 });
 
+loadSpriteAtlas("assets/new tag.png", {
+	'new': {
+		x: 0,
+		y: 0,
+		width: 77,
+		height: 37,
+		sliceX: 1,
+	},
+	'old': {
+		x: 77,
+		y: 0,
+		width: 77,
+		height: 37,
+		sliceX: 1,
+	},
+});
+
 loadFont("pixelify", "assets/fonts/PixelifySans-Medium.ttf")
 
 // define gravity
@@ -236,6 +256,8 @@ scene("start", () => {
 });
 
 scene("scoreboard", () => {
+	let medals = medalList(getMedal());
+
 	add([
 		sprite("background", {width: width(), height: height()}),
 		pos(width() / 2, height() / 2),
@@ -254,7 +276,7 @@ scene("scoreboard", () => {
 	]);
 
 	btnHome.add([
-		text("<-", {
+		text("back", {
 			font: "Pixelify"
 		}),
 		anchor("center"),
@@ -275,6 +297,7 @@ scene("scoreboard", () => {
 
 	btnHome.onClick(() => go("start"))
 
+	//medals
 	add([
 		sprite("medal frame"),
 		pos(width() / 4, height() / 4),
@@ -282,6 +305,35 @@ scene("scoreboard", () => {
 		scale(1),
 		fixed()
 	]);
+
+	for (let i = 0; i < medals.length; i++) {
+		add([
+			sprite(medals[i]),
+			pos(width() / 4 - 43, height() / 4 + 27 + i * 93),
+		]);
+	} 
+
+	//leaderboard
+	add([
+		sprite("header"),
+		pos(width()/ 2, height()/4),
+		fixed(),
+		anchor("top"),
+	]);
+
+	add([
+		sprite("row"),
+		pos(width()/ 2, height()/4 + 96),
+		fixed(),
+		anchor("top"),
+	]);
+
+	add([
+		sprite("footer"),
+		pos(width()/ 2, height()/4+83+96),
+		fixed(),
+		anchor("top"),
+	])
 });
 
 scene("chartest", () => {
@@ -604,22 +656,20 @@ scene("game", () => {
 	
 	//player collision with pipes 
 	player.onCollide("pipe", ()=> {
-		go("lose", score);
-		addKaboom(player.pos);
+		go("lose", score, currBest);
 	});
 
 	//player touches ground after game starts
 	player.onCollide("floor", ()=> {
 		if(player.moved === true){
-			go("lose", score);
-			addKaboom(player.pos);
+			go("lose", score, currBest);
 		}
 	});
 
 	//player goes out of bounds
 	player.onUpdate(() => {
 		if(player.pos.y >= height() || player.pos.y <= CEILING){
-			go("lose", score);
+			go("lose", score, currBest);
 		}
 	});
 
@@ -656,6 +706,7 @@ scene("game", () => {
 
 	//updating score
 	let score = 0;
+	let currBest = getBestScore();
 
 	const scoreLabel = add([
 		text(score,{ //score
@@ -673,15 +724,20 @@ scene("game", () => {
 	}
 })
 
-scene("lose", (score) => {
+scene("lose", (score, currBest) => {
+	let tag = "old"
 	let best = 0;
 	let checkBest = compareScore(score);
+
+	if(currBest < score){
+		tag = "new"
+	}
+
 	if( checkBest === "new"){
 		best = score;
-		//add new tag
 	} else {
 		best = getBestScore();
-	}
+	}	
 
 	add([
 		sprite("background", {width: width(), height: height()}),
@@ -721,6 +777,12 @@ scene("lose", (score) => {
 		scale(2),
 		anchor("right"),
 		color(255, 255, 255),
+		z(10),
+	])
+
+	let newTag = add([
+		sprite(tag),
+		pos(width() / 2 + 115, height() / 2 - 56),
 		z(10),
 	])
 

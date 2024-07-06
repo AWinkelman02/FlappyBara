@@ -66,8 +66,23 @@ function getMedal(){
     return totalMedals;
 }
 
+function medalList(totalMedals){
+    let list = ["bronze", "silver", "gold", "plat", "diamond"];
+    let playerMedals = [];
+
+    if(totalMedals === 0 || totalMedals === null){
+        playerMedals.push("none")
+        return playerMedals;
+    }
+
+    for (let i = 0; i < totalMedals; i++) {
+        playerMedals.push(list[i]);
+    }
+    return playerMedals;
+}
+
 //post leaderboard
 //get leaderboard
 
 
-export { compareScore, saveBestScore, getBestScore, checkMedal, getMedal };
+export { compareScore, saveBestScore, getBestScore, checkMedal, getMedal, medalList };
