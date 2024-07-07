@@ -14,6 +14,8 @@ setBackground(102, 207, 46)
 
 loadSprite("background", "assets/background.png");
 loadSprite("title", "assets/fonts/title.png");
+loadSprite("btn1", "assets/button 1.png");
+loadSprite("btn2", "assets/button 2.png");
 loadSprite("scorecard", "assets/scorecard.png");
 loadSprite("medal frame", "assets/medal frame.png");
 loadSprite("header", "assets/lb header.png");
@@ -192,13 +194,14 @@ scene("start", () => {
 		fixed()
 	]);
 
-	const btnStart = add([
-		rect(240, 80, { radius: 8 }),
+	let btnStart = add([
+		sprite("btn1"),
 		pos(width() / 2, height() / 1.9),
 		area(),
 		scale(1),
 		anchor("center"),
-		outline(4),
+		"start",
+		opacity(1),
 	]);
 
 	btnStart.add([
@@ -210,10 +213,8 @@ scene("start", () => {
 	]);
 
 	btnStart.onHoverUpdate(() => {
-		const t = time() * 10
-		btnStart.color = hsl2rgb((t / 10) % 1, 0.6, 0.7)
-		btnStart.scale = vec2(1.2)
 		setCursor("pointer")
+		btnStart.scale = vec2(1.2)
 	});
 
 	btnStart.onHoverEnd(() => {
@@ -224,7 +225,7 @@ scene("start", () => {
 	btnStart.onClick(() => go("game"))
 
 	const btnLeader = add([
-		rect(240, 80, { radius: 8 }),
+		sprite("btn1"),
 		pos(width() / 2, height() / 1.5),
 		area(),
 		scale(1),
@@ -241,10 +242,8 @@ scene("start", () => {
 	]);
 
 	btnLeader.onHoverUpdate(() => {
-		const t = time() * 10
-		btnLeader.color = hsl2rgb((t / 10) % 1, 0.6, 0.7)
-		btnLeader.scale = vec2(1.2)
 		setCursor("pointer")
+		btnLeader.scale = vec2(1.2)
 	});
 
 	btnLeader.onHoverEnd(() => {
@@ -267,7 +266,7 @@ scene("scoreboard", () => {
 	]);
 
 	const btnHome = add([
-		rect(192, 64, { radius: 8 }),
+		sprite("btn2"),
 		pos(width() / 7, height() / 7),
 		area(),
 		scale(1),
@@ -285,7 +284,6 @@ scene("scoreboard", () => {
 
 	btnHome.onHoverUpdate(() => {
 		const t = time() * 10
-		btnHome.color = hsl2rgb((t / 10) % 1, 0.6, 0.7)
 		btnHome.scale = vec2(1.2)
 		setCursor("pointer")
 	});
@@ -334,178 +332,6 @@ scene("scoreboard", () => {
 		fixed(),
 		anchor("top"),
 	])
-});
-
-scene("chartest", () => {
-	// define gravity
-	setGravity(0)
-
-	let player = add([
-		pos(width() / 3, height() / 3),
-		sprite("capy"),
-		area(),
-		body(),
-		z(1),
-		{ moved: false },
-		"capy",
-	]);
-
-	add([
-	  sprite("background", {width: width(), height: height()}),
-	  pos(width() / 2, height() / 2),
-	  anchor("center"),
-	  scale(1),
-	  fixed()
-	]);
-
-	//initialize floor and trim
-	let tileAmount = width() / 48;
-	for(let i = 0; i < tileAmount; i++){
-		add([
-			sprite("grass"),
-			pos(i * 48, height()),
-			anchor("botleft"),
-			area(),
-			body({isStatic: true}),
-			z(100),
-			move(LEFT, SPEED),
-			offscreen({ destroy: true }),
-			"floor",
-		]);
-
-		add([
-			sprite("grass trim"),
-			pos(i * 48, height() - FLOOR_HEIGHT + 6),
-			anchor("botleft"),
-			z(100),
-			move(LEFT, SPEED),
-			offscreen({ destroy: true }),
-			"floor",
-		]);
-	}
-
-	//build more floor and trim
-	function spawnFloor(){
-		let tileAmount = width() / 48;
-		for(let i = 0; i < tileAmount; i++){
-			add([
-				sprite("grass"),
-				pos(width() - 2 + i * 48, height()),
-				anchor("botleft"),
-				area(),
-				body({isStatic: true}),
-				z(100),
-				move(LEFT, SPEED),
-				offscreen({ destroy: true }),
-				"floor",
-			]);
-	
-			add([
-				sprite("grass trim"),
-				pos(width() - 2 + i * 48, height() - FLOOR_HEIGHT + 6),
-				anchor("botleft"),
-				z(100),
-				move(LEFT, SPEED),
-				offscreen({ destroy: true }),
-				"floor",
-			]);
-		}
-	}
-
-	//obstacles
-	
-	function spawnObsactle(){
-		if(player.moved === true){
-			let obsTileAmount = Math.ceil(height() / 120);
-			let beginOpening = Math.ceil(rand(2, obsTileAmount - 3))
-			let lampLevel = obsTileAmount - 1;
-	
-			for (let i = 1; i <= obsTileAmount; i++) {
-				if(i === 1){
-					add([
-						pos(width() + OFFSET_OFFSCREEN, height() - TILE_HEIGHT * i - FLOOR_HEIGHT),
-						sprite("b1"),
-						area(),
-						move(LEFT, SPEED),
-						offscreen({ destroy: true }),
-						z(2),
-						"pipe",
-						{ passed: false },
-					]);
-					bambooLeafType(i);
-				} else if(i != beginOpening && i != beginOpening + 1){
-					bambooBaseType(i);
-					bambooLeafType(i);
-					if(i === lampLevel){
-						createLamp(i);
-					}
-				}
-			}
-		}
-	};
-
-	//spawn a pipe every x sec
-	loop(1.3, () => {
-		spawnObsactle()
-	});
-	//spawnObsactle()
-
-	//spawn a floor every x sec
-	loop(.8, () => {
-		spawnFloor()
-	});
-
-
-
-	//player inputs
-	onKeyPress("space", () => {
-		if(player.moved === false){
-			setGravity(3200)
-			player.moved = true;
-			player.jump();
-			player.play('fly')
-		} else {
-			player.jump();
-			player.play('fly')
-		}
-	});
-
-	onClick(() => {
-		if(player.moved === false){
-			setGravity(3200)
-			player.moved = true;
-			player.jump();
-			player.play('fly')
-		} else {
-			player.jump();
-			player.play('fly')
-		}
-	});
-
-	onKeyPress("up", () => {
-		if(player.moved === false){
-			setGravity(3200)
-			player.moved = true;
-			player.jump();
-			player.play('fly')
-		} else {
-			player.jump();
-			player.play('fly')
-		}
-	});
-
-	//player idle animation
-	onLoad(() => {
-		if(player.moved === false){
-			player.play('fly');
-		}
-	});
-	
-	loop(.45, () => {
-		if(player.moved === false){
-			player.play('fly');
-		}
-	});
 });
 
 scene("game", () => {
@@ -781,8 +607,8 @@ scene("lose", (score, currBest) => {
 	])
 
 	let newTag = add([
-		sprite(tag),
-		pos(width() / 2 + 115, height() / 2 - 56),
+		sprite(tag), //tag
+		pos(width() / 2 + 30, height() / 2 - 116),
 		z(10),
 	])
 
@@ -836,7 +662,7 @@ scene("lose", (score, currBest) => {
 	}
 
  	const btnSubmit = add([
-		rect(192, 64, { radius: 8 }),
+		sprite("btn2"),
 		pos(width() / 2 + 200, height() / 2 + 220),
 		area(),
 		scale(1),
@@ -853,19 +679,21 @@ scene("lose", (score, currBest) => {
 	]);
 
 	btnSubmit.onHoverUpdate(() => {
-		const t = time() * 10
-		btnSubmit.color = hsl2rgb((t / 10) % 1, 0.6, 0.7)
 		btnSubmit.scale = vec2(1.2)
 		setCursor("pointer")
 	});
 
 	btnSubmit.onHoverEnd(() => {
 		btnSubmit.scale = vec2(1)
-		btnSubmit.color = rgb()
 	});
 
+	btnSubmit.onClick(() => {
+		//submit to data base
+		go("scoreboard")
+	})
+
 	const btnRestart = add([
-		rect(192, 64, { radius: 8 }),
+		sprite("btn2"),
 		pos(width() / 2 - 200, height() / 2 + 350),
 		area(),
 		scale(1),
@@ -882,21 +710,18 @@ scene("lose", (score, currBest) => {
 	]);
 
 	btnRestart.onHoverUpdate(() => {
-		const t = time() * 10
-		btnRestart.color = hsl2rgb((t / 10) % 1, 0.6, 0.7)
 		btnRestart.scale = vec2(1.2)
 		setCursor("pointer")
 	});
 
 	btnRestart.onHoverEnd(() => {
 		btnRestart.scale = vec2(1)
-		btnRestart.color = rgb()
 	});
 
 	btnRestart.onClick(() => go("game"))
 
 	const btnHome = add([
-		rect(192, 64, { radius: 8 }),
+		sprite("btn2"),
 		pos(width() / 2 + 200, height() / 2 + 350),
 		area(),
 		scale(1),
@@ -913,15 +738,12 @@ scene("lose", (score, currBest) => {
 	]);
 
 	btnHome.onHoverUpdate(() => {
-		const t = time() * 10
-		btnHome.color = hsl2rgb((t / 10) % 1, 0.6, 0.7)
 		btnHome.scale = vec2(1.2)
 		setCursor("pointer")
 	});
 
 	btnHome.onHoverEnd(() => {
 		btnHome.scale = vec2(1)
-		btnHome.color = rgb()
 	});
 
 	btnHome.onClick(() => go("start"))
