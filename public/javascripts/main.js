@@ -717,7 +717,7 @@ scene("lose", (score, currBest) => {
 	btnRestart.onHoverEnd(() => {
 		btnRestart.scale = vec2(1)
 	});
-
+ 
 	btnRestart.onClick(() => go("game"))
 
 	const btnHome = add([
