@@ -285,7 +285,7 @@ scene("scoreboard", () => {
 
 	const btnHome = add([
 		sprite("btn2"),
-		pos(width() / 7, height() / 7),
+		pos(width() / 8, height() / 7),
 		area(),
 		scale(1),
 		anchor("center"),
@@ -316,7 +316,7 @@ scene("scoreboard", () => {
 	//medals
 	add([
 		sprite("medal frame"),
-		pos(width() / 4, height() / 4),
+		pos(width() / 4, height() / 7),
 		anchor("top"),
 		scale(1),
 		fixed()
@@ -325,7 +325,7 @@ scene("scoreboard", () => {
 	for (let i = 0; i < medals.length; i++) {
 		add([
 			sprite(medals[i]),
-			pos(width() / 4 - 43, height() / 4 + 27 + i * 93),
+			pos(width() / 4 - 43, height() / 7 + 27 + i * 93),
 		]);
 	} 
 

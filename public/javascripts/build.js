@@ -4229,7 +4229,7 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
     ]);
     const btnHome = add([
       sprite("btn2"),
-      pos(width() / 7, height() / 7),
+      pos(width() / 8, height() / 7),
       area(),
       scale(1),
       anchor("center"),
@@ -4254,7 +4254,7 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
     btnHome.onClick(() => go("start"));
     add([
       sprite("medal frame"),
-      pos(width() / 4, height() / 4),
+      pos(width() / 4, height() / 7),
       anchor("top"),
       scale(1),
       fixed()
@@ -4262,7 +4262,7 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
     for (let i2 = 0; i2 < medals.length; i2++) {
       add([
         sprite(medals[i2]),
-        pos(width() / 4 - 43, height() / 4 + 27 + i2 * 93)
+        pos(width() / 4 - 43, height() / 7 + 27 + i2 * 93)
       ]);
     }
     add([
