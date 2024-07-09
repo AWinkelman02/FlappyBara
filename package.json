@@ -19,6 +19,7 @@
     "http-errors": "~1.6.3",
     "kaboom": "^3000.1.17",
     "mongoose": "^8.5.0",
-    "morgan": "~1.9.1"
+    "morgan": "~1.9.1",
+    "serve-favicon": "^2.5.0"
   }
 }
