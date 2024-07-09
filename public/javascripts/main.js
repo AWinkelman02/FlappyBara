@@ -350,7 +350,7 @@ scene("scoreboard", () => {
 			text(name, {
 				font: "Pixelify"
 			}),
-			pos(-100, 0),
+			pos(-200, 17),
 			color(255, 255, 255),
 		]);
 
@@ -358,7 +358,7 @@ scene("scoreboard", () => {
 			text(score, {
 				font: "Pixelify"
 			}),
-			pos(100, 0),
+			pos(130, 17),
 			color(255, 255, 255),
 		]);
 	}

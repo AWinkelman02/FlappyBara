@@ -4282,14 +4282,14 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
         text(name, {
           font: "Pixelify"
         }),
-        pos(-100, 0),
+        pos(-200, 17),
         color(255, 255, 255)
       ]);
       row.add([
         text(score, {
           font: "Pixelify"
         }),
-        pos(100, 0),
+        pos(130, 17),
         color(255, 255, 255)
       ]);
     }

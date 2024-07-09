@@ -9,7 +9,7 @@ const { body, validationResult } = require("express-validator");
 exports.leaderboardData = asyncHandler(async (req, res, next) => {
     //query database for the data
     const leaderboard =  await Leaderboard.find({})
-    .sort({ score: 1 })
+    .sort({ score: -1 })
     .exec();
     res.send({leaderboard: leaderboard });
 })
