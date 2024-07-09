@@ -1,6 +1,6 @@
 import kaboom from "kaboom"
 import { bambooBaseType, bambooLeafType, createLamp } from "./bamboo.js"
-import { compareScore, getBestScore, checkMedal, getMedal, medalList } from "./scores.js"
+import { compareScore, getBestScore, checkMedal, getMedal, medalList, postLeaderboardData } from "./scores.js"
 
 const FLOOR_HEIGHT = 48;
 const TILE_HEIGHT = 120;
@@ -640,24 +640,28 @@ scene("lose", (score, currBest) => {
 		let backEv
 		let maxLength = 8
 
+
 		return {
 			id: "input",
 			require: ["text"],
 			add() {
 				charEv = onCharInput((character) => {
 					if (this.text.length < maxLength) {
-						this.text += character
+						this.text += character.toUpperCase();
+						txt = this.text;
 					}
 				})
 				
 				backEv = onKeyPress("backspace", () => {
 					this.text = this.text.slice(0, -1)
+					txt = this.text;
 				})
 			},
 			destroy() {
 				charEv.cancel()
 				backEv.cancel()
 			}
+
 		}
 	}
 
@@ -688,8 +692,8 @@ scene("lose", (score, currBest) => {
 	});
 
 	btnSubmit.onClick(() => {
-		//submit to data base
-		go("scoreboard")
+		postLeaderboardData(txt, score);
+		go("scoreboard");
 	})
 
 	const btnRestart = add([

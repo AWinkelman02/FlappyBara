@@ -82,7 +82,18 @@ function medalList(totalMedals){
 }
 
 //post leaderboard
-//get leaderboard
+async function postLeaderboardData(name, score){
+    const response = await fetch("/", {
+        method: "POST",
+        body: JSON.stringify({
+          name: name,
+          score: score
+        }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        }
+    });
+}
 
 
-export { compareScore, saveBestScore, getBestScore, checkMedal, getMedal, medalList };
+export { compareScore, saveBestScore, getBestScore, checkMedal, getMedal, medalList, postLeaderboardData };
