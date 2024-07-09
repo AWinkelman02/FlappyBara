@@ -7,13 +7,18 @@
     "build": "esbuild ./public/javascripts/main.js --bundle > ./public/javascripts/build.js"
   },
   "dependencies": {
+    "bad-words": "^3.0.4",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
+    "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "esbuild": "^0.23.0",
     "express": "^4.19.2",
+    "express-async-handler": "^1.2.0",
+    "express-validator": "^7.1.0",
     "http-errors": "~1.6.3",
     "kaboom": "^3000.1.17",
+    "mongoose": "^8.5.0",
     "morgan": "~1.9.1"
   }
 }
