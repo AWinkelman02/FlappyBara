@@ -652,7 +652,7 @@ scene("lose", (score, currBest) => {
 	])
 
 	let medal = add([
-		sprite(checkMedal(score)),
+		sprite(checkMedal(score)),//score
 		pos(width() / 2 - 218, height() / 2 - 141),
 	])
 

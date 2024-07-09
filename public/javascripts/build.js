@@ -4542,7 +4542,8 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
       z(10)
     ]);
     let medal = add([
-      sprite(checkMedal(score)),
+      sprite(checkMedal(301)),
+      //score
       pos(width() / 2 - 218, height() / 2 - 141)
     ]);
     let txtInput = add([

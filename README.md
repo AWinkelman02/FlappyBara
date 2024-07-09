@@ -31,4 +31,3 @@ will build your game and package into a .zip file, you can upload to your server
 Features to Add
 -Click to start - new starting image
 -additional flora on ground
--leaderboard and DB
