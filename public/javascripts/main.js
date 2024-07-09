@@ -257,6 +257,24 @@ scene("start", () => {
 scene("scoreboard", () => {
 	let medals = medalList(getMedal());
 
+	async function getSBData(){
+		fetch('/data', {mode: 'cors'})
+		.then((response)=>{
+			return(response.json());
+		})
+		.then((response)=>{
+			for (let i = 0; i < response.leaderboard.length + 1; i++) {
+				if(i != response.leaderboard.length){
+					buildBoardRow(i, response.leaderboard[i].name, response.leaderboard[i].score);
+				} else {
+					buildBoardFooter(i);
+				}
+			}
+		})
+	}
+
+	getSBData();
+
 	add([
 		sprite("background", {width: width(), height: height()}),
 		pos(width() / 2, height() / 2),
@@ -319,19 +337,40 @@ scene("scoreboard", () => {
 		anchor("top"),
 	]);
 
-	add([
-		sprite("row"),
-		pos(width()/ 2, height()/4 + 96),
-		fixed(),
-		anchor("top"),
-	]);
+	//build scoreboard
+	function buildBoardRow(i, name, score){
+		let row = add([
+			sprite("row"),
+			pos(width()/ 2, height()/4 + 96 + 83 * i),
+			fixed(),
+			anchor("top"),
+		]);
 
-	add([
-		sprite("footer"),
-		pos(width()/ 2, height()/4+83+96),
-		fixed(),
-		anchor("top"),
-	])
+		row.add([
+			text(name, {
+				font: "Pixelify"
+			}),
+			pos(-100, 0),
+			color(255, 255, 255),
+		]);
+
+		row.add([
+			text(score, {
+				font: "Pixelify"
+			}),
+			pos(100, 0),
+			color(255, 255, 255),
+		]);
+	}
+	
+	function buildBoardFooter(i){
+		add([
+			sprite("footer"),
+			pos(width()/ 2, height()/4 + i * 83 + 96),
+			fixed(),
+			anchor("top"),
+		])
+	}
 });
 
 scene("game", () => {

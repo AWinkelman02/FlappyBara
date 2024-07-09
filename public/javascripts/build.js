@@ -3963,6 +3963,18 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
     }
     return playerMedals;
   }
+  async function postLeaderboardData(name, score) {
+    const response = await fetch("/", {
+      method: "POST",
+      body: JSON.stringify({
+        name,
+        score
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8"
+      }
+    });
+  }
 
   // public/javascripts/main.js
   var FLOOR_HEIGHT2 = 48;
@@ -4194,6 +4206,20 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
   });
   scene("scoreboard", () => {
     let medals = medalList(getMedal());
+    async function getSBData() {
+      fetch("/data", { mode: "cors" }).then((response) => {
+        return response.json();
+      }).then((response) => {
+        for (let i2 = 0; i2 < response.leaderboard.length + 1; i2++) {
+          if (i2 != response.leaderboard.length) {
+            buildBoardRow(i2, response.leaderboard[i2].name, response.leaderboard[i2].score);
+          } else {
+            buildBoardFooter(i2);
+          }
+        }
+      });
+    }
+    getSBData();
     add([
       sprite("background", { width: width(), height: height() }),
       pos(width() / 2, height() / 2),
@@ -4245,18 +4271,36 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
       fixed(),
       anchor("top")
     ]);
-    add([
-      sprite("row"),
-      pos(width() / 2, height() / 4 + 96),
-      fixed(),
-      anchor("top")
-    ]);
-    add([
-      sprite("footer"),
-      pos(width() / 2, height() / 4 + 83 + 96),
-      fixed(),
-      anchor("top")
-    ]);
+    function buildBoardRow(i2, name, score) {
+      let row = add([
+        sprite("row"),
+        pos(width() / 2, height() / 4 + 96 + 83 * i2),
+        fixed(),
+        anchor("top")
+      ]);
+      row.add([
+        text(name, {
+          font: "Pixelify"
+        }),
+        pos(-100, 0),
+        color(255, 255, 255)
+      ]);
+      row.add([
+        text(score, {
+          font: "Pixelify"
+        }),
+        pos(100, 0),
+        color(255, 255, 255)
+      ]);
+    }
+    function buildBoardFooter(i2) {
+      add([
+        sprite("footer"),
+        pos(width() / 2, height() / 4 + i2 * 83 + 96),
+        fixed(),
+        anchor("top")
+      ]);
+    }
   });
   scene("game", () => {
     setGravity(0);
@@ -4527,11 +4571,13 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
         add() {
           charEv = onCharInput((character) => {
             if (this.text.length < maxLength) {
-              this.text += character;
+              this.text += character.toUpperCase();
+              txt = this.text;
             }
           });
           backEv = onKeyPress("backspace", () => {
             this.text = this.text.slice(0, -1);
+            txt = this.text;
           });
         },
         destroy() {
@@ -4563,6 +4609,7 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
       btnSubmit.scale = vec2(1);
     });
     btnSubmit.onClick(() => {
+      postLeaderboardData(txt, score);
       go("scoreboard");
     });
     const btnRestart = add([
