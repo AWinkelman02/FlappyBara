@@ -4236,7 +4236,7 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
       outline(4)
     ]);
     btnHome.add([
-      text("back", {
+      text("Back", {
         font: "Pixelify"
       }),
       anchor("center"),
@@ -4267,14 +4267,14 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
     }
     add([
       sprite("header"),
-      pos(width() / 2, height() / 4),
+      pos(width() / 2, height() / 7),
       fixed(),
       anchor("top")
     ]);
     function buildBoardRow(i2, name, score) {
       let row = add([
         sprite("row"),
-        pos(width() / 2, height() / 4 + 96 + 83 * i2),
+        pos(width() / 2, height() / 7 + 96 + 83 * i2),
         fixed(),
         anchor("top")
       ]);
@@ -4289,14 +4289,15 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
         text(score, {
           font: "Pixelify"
         }),
-        pos(130, 17),
+        pos(130, 36),
+        anchor("center"),
         color(255, 255, 255)
       ]);
     }
     function buildBoardFooter(i2) {
       add([
         sprite("footer"),
-        pos(width() / 2, height() / 4 + i2 * 83 + 96),
+        pos(width() / 2, height() / 7 + i2 * 83 + 96),
         fixed(),
         anchor("top")
       ]);
@@ -4542,7 +4543,7 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
       z(10)
     ]);
     let medal = add([
-      sprite(checkMedal(301)),
+      sprite(checkMedal(score)),
       //score
       pos(width() / 2 - 218, height() / 2 - 141)
     ]);

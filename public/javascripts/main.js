@@ -293,7 +293,7 @@ scene("scoreboard", () => {
 	]);
 
 	btnHome.add([
-		text("back", {
+		text("Back", {
 			font: "Pixelify"
 		}),
 		anchor("center"),
@@ -332,7 +332,7 @@ scene("scoreboard", () => {
 	//leaderboard
 	add([
 		sprite("header"),
-		pos(width()/ 2, height()/4),
+		pos(width()/ 2, height()/7),
 		fixed(),
 		anchor("top"),
 	]);
@@ -341,7 +341,7 @@ scene("scoreboard", () => {
 	function buildBoardRow(i, name, score){
 		let row = add([
 			sprite("row"),
-			pos(width()/ 2, height()/4 + 96 + 83 * i),
+			pos(width()/ 2, height()/7 + 96 + 83 * i),
 			fixed(),
 			anchor("top"),
 		]);
@@ -358,7 +358,8 @@ scene("scoreboard", () => {
 			text(score, {
 				font: "Pixelify"
 			}),
-			pos(130, 17),
+			pos(130, 36),
+			anchor("center"),
 			color(255, 255, 255),
 		]);
 	}
@@ -366,7 +367,7 @@ scene("scoreboard", () => {
 	function buildBoardFooter(i){
 		add([
 			sprite("footer"),
-			pos(width()/ 2, height()/4 + i * 83 + 96),
+			pos(width()/ 2, height()/7 + i * 83 + 96),
 			fixed(),
 			anchor("top"),
 		])

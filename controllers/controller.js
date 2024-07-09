@@ -10,6 +10,7 @@ exports.leaderboardData = asyncHandler(async (req, res, next) => {
     //query database for the data
     const leaderboard =  await Leaderboard.find({})
     .sort({ score: -1 })
+    .limit(7)
     .exec();
     res.send({leaderboard: leaderboard });
 })
