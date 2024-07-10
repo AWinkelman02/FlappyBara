@@ -8,9 +8,14 @@ const CEILING = -130;
 const SPEED = 300;
 const OFFSET_OFFSCREEN = 95;
 
-kaboom()
+kaboom({
+	backgroundAudio: true,
+})
 
 setBackground(102, 207, 46)
+
+loadMusic("jungle", "./sounds/jungle_prince.mp3");
+loadMusic("flap", "./sounds/flap.mp3");
 
 loadSprite("background", "./images/assets/background.png");
 loadSprite("title", "./images/assets/fonts/title.png");
@@ -174,6 +179,11 @@ loadFont("pixelify", "./images/assets/fonts/PixelifySans-Medium.ttf")
 
 // define gravity
 setGravity(0)
+
+//background music
+const music = play("jungle", {
+	loop: true,
+})
 
 scene("start", () => {
 	onUpdate(() => setCursor("default"));
@@ -460,9 +470,11 @@ scene("game", () => {
 			player.moved = true;
 			player.jump();
 			player.play('fly')
+			play('flap');
 		} else {
 			player.jump();
 			player.play('fly')
+			play('flap');
 		}
 	});
 
@@ -471,10 +483,12 @@ scene("game", () => {
 			setGravity(3200)
 			player.moved = true;
 			player.jump();
-			player.play('fly')
+			player.play('fly');
+			play('flap');
 		} else {
 			player.jump();
-			player.play('fly')
+			player.play('fly');
+			play('flap');
 		}
 	});
 
@@ -484,9 +498,11 @@ scene("game", () => {
 			player.moved = true;
 			player.jump();
 			player.play('fly')
+			play('flap');
 		} else {
 			player.jump();
 			player.play('fly')
+			play('flap');
 		}
 	});
 

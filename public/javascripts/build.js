@@ -3982,8 +3982,12 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
   var CEILING = -130;
   var SPEED2 = 300;
   var OFFSET_OFFSCREEN2 = 95;
-  zo();
+  zo({
+    backgroundAudio: true
+  });
   setBackground(102, 207, 46);
+  loadMusic("jungle", "./sounds/jungle_prince.mp3");
+  loadMusic("flap", "./sounds/flap.mp3");
   loadSprite("background", "./images/assets/background.png");
   loadSprite("title", "./images/assets/fonts/title.png");
   loadSprite("btn1", "./images/assets/button 1.png");
@@ -4138,6 +4142,9 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
   });
   loadFont("pixelify", "./images/assets/fonts/PixelifySans-Medium.ttf");
   setGravity(0);
+  var music = play("jungle", {
+    loop: true
+  });
   scene("start", () => {
     onUpdate(() => setCursor("default"));
     add([
@@ -4377,9 +4384,11 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
         player.moved = true;
         player.jump();
         player.play("fly");
+        play("flap");
       } else {
         player.jump();
         player.play("fly");
+        play("flap");
       }
     });
     onClick(() => {
@@ -4388,9 +4397,11 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
         player.moved = true;
         player.jump();
         player.play("fly");
+        play("flap");
       } else {
         player.jump();
         player.play("fly");
+        play("flap");
       }
     });
     onKeyPress("up", () => {
@@ -4399,9 +4410,11 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
         player.moved = true;
         player.jump();
         player.play("fly");
+        play("flap");
       } else {
         player.jump();
         player.play("fly");
+        play("flap");
       }
     });
     function spawnObsactle() {
