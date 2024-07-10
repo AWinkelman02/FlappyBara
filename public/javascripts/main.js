@@ -8,14 +8,13 @@ const CEILING = -130;
 const SPEED = 300;
 const OFFSET_OFFSCREEN = 95;
 
-kaboom({
-	backgroundAudio: true,
-})
+kaboom();
 
 setBackground(102, 207, 46)
 
-loadMusic("jungle", "./sounds/jungle_prince.mp3");
-loadMusic("flap", "./sounds/flap.mp3");
+loadSound("jungle", "./images/sounds/jungle_prince.mp3");
+loadSound("flap", "./images/sounds/flap.mp3");
+loadSound("click", "./images/sounds/click.wav");
 
 loadSprite("background", "./images/assets/background.png");
 loadSprite("title", "./images/assets/fonts/title.png");
@@ -180,12 +179,9 @@ loadFont("pixelify", "./images/assets/fonts/PixelifySans-Medium.ttf")
 // define gravity
 setGravity(0)
 
-//background music
-const music = play("jungle", {
-	loop: true,
-})
-
 scene("start", () => {
+
+
 	onUpdate(() => setCursor("default"));
 
 	add([
@@ -232,7 +228,10 @@ scene("start", () => {
 		btnStart.color = rgb()
 	});
 
-	btnStart.onClick(() => go("game"))
+	btnStart.onClick(() => {
+		go("game");
+		play("click");
+	})
 
 	const btnLeader = add([
 		sprite("btn1"),
@@ -261,7 +260,10 @@ scene("start", () => {
 		btnLeader.color = rgb()
 	});
 
-	btnLeader.onClick(() => go("scoreboard", 0))
+	btnLeader.onClick(() => {
+		go("scoreboard");
+		play("click");
+	})
 });
 
 scene("scoreboard", () => {
@@ -321,7 +323,10 @@ scene("scoreboard", () => {
 		btnHome.color = rgb()
 	});
 
-	btnHome.onClick(() => go("start"))
+	btnHome.onClick(() => {
+		go("start");
+		play("click");
+	})
 
 	//medals
 	add([
@@ -387,6 +392,11 @@ scene("scoreboard", () => {
 scene("game", () => {
 	// define gravity
 	setGravity(0)
+
+	//background music
+	//play("jungle", {
+		//loop: true,
+	//});
 
 	let obsTileAmount = Math.ceil(height() / 120);
 	let timing = obsTileAmount * 0.1625;
@@ -750,6 +760,7 @@ scene("lose", (score, currBest) => {
 	btnSubmit.onClick(() => {
 		postLeaderboardData(txt, score);
 		go("scoreboard");
+		play("click");
 	})
 
 	const btnRestart = add([
@@ -778,7 +789,10 @@ scene("lose", (score, currBest) => {
 		btnRestart.scale = vec2(1)
 	});
  
-	btnRestart.onClick(() => go("game"))
+	btnRestart.onClick(() => {
+		go("game");
+		play("click");
+	})
 
 	const btnHome = add([
 		sprite("btn2"),
@@ -806,7 +820,10 @@ scene("lose", (score, currBest) => {
 		btnHome.scale = vec2(1)
 	});
 
-	btnHome.onClick(() => go("start"))
+	btnHome.onClick(() => {
+		go("start");
+		play("click");
+	})
 })
 
 go("start")

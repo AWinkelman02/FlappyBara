@@ -3982,12 +3982,11 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
   var CEILING = -130;
   var SPEED2 = 300;
   var OFFSET_OFFSCREEN2 = 95;
-  zo({
-    backgroundAudio: true
-  });
+  zo();
   setBackground(102, 207, 46);
-  loadMusic("jungle", "./sounds/jungle_prince.mp3");
-  loadMusic("flap", "./sounds/flap.mp3");
+  loadSound("jungle", "./images/sounds/jungle_prince.mp3");
+  loadSound("flap", "./images/sounds/flap.mp3");
+  loadSound("click", "./images/sounds/click.wav");
   loadSprite("background", "./images/assets/background.png");
   loadSprite("title", "./images/assets/fonts/title.png");
   loadSprite("btn1", "./images/assets/button 1.png");
@@ -4142,9 +4141,6 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
   });
   loadFont("pixelify", "./images/assets/fonts/PixelifySans-Medium.ttf");
   setGravity(0);
-  var music = play("jungle", {
-    loop: true
-  });
   scene("start", () => {
     onUpdate(() => setCursor("default"));
     add([
@@ -4185,7 +4181,10 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
       btnStart.scale = vec2(1);
       btnStart.color = rgb();
     });
-    btnStart.onClick(() => go("game"));
+    btnStart.onClick(() => {
+      go("game");
+      play("click");
+    });
     const btnLeader = add([
       sprite("btn1"),
       pos(width() / 2, height() / 1.5),
@@ -4209,7 +4208,10 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
       btnLeader.scale = vec2(1);
       btnLeader.color = rgb();
     });
-    btnLeader.onClick(() => go("scoreboard", 0));
+    btnLeader.onClick(() => {
+      go("scoreboard");
+      play("click");
+    });
   });
   scene("scoreboard", () => {
     let medals = medalList(getMedal());
@@ -4258,7 +4260,10 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
       btnHome.scale = vec2(1);
       btnHome.color = rgb();
     });
-    btnHome.onClick(() => go("start"));
+    btnHome.onClick(() => {
+      go("start");
+      play("click");
+    });
     add([
       sprite("medal frame"),
       pos(width() / 4, height() / 7),
@@ -4626,6 +4631,7 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
     btnSubmit.onClick(() => {
       postLeaderboardData(txt, score);
       go("scoreboard");
+      play("click");
     });
     const btnRestart = add([
       sprite("btn2"),
@@ -4649,7 +4655,10 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
     btnRestart.onHoverEnd(() => {
       btnRestart.scale = vec2(1);
     });
-    btnRestart.onClick(() => go("game"));
+    btnRestart.onClick(() => {
+      go("game");
+      play("click");
+    });
     const btnHome = add([
       sprite("btn2"),
       pos(width() / 2 + 200, height() / 2 + 350),
@@ -4672,7 +4681,10 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
     btnHome.onHoverEnd(() => {
       btnHome.scale = vec2(1);
     });
-    btnHome.onClick(() => go("start"));
+    btnHome.onClick(() => {
+      go("start");
+      play("click");
+    });
   });
   go("start");
 })();
