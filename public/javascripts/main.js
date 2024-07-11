@@ -1,6 +1,7 @@
 import kaboom from "kaboom"
 import { bambooBaseType, bambooLeafType, createLamp } from "./bamboo.js"
 import { compareScore, getBestScore, checkMedal, getMedal, medalList, postLeaderboardData } from "./scores.js"
+import { header } from "express-validator";
 
 const FLOOR_HEIGHT = 48;
 const TILE_HEIGHT = 120;
@@ -12,10 +13,12 @@ kaboom();
 
 setBackground(102, 207, 46)
 
+//sounds
 loadSound("jungle", "./images/sounds/jungle_prince.mp3");
 loadSound("flap", "./images/sounds/flap.mp3");
 loadSound("click", "./images/sounds/click.wav");
 
+//sprites and assets
 loadSprite("background", "./images/assets/background.png");
 loadSprite("title", "./images/assets/fonts/title.png");
 loadSprite("btn1", "./images/assets/button 1.png");
@@ -28,6 +31,8 @@ loadSprite("footer", "./images/assets/lb footer.png");
 loadSprite("grass", "./images/assets/grass block.png");
 loadSprite("grass trim", "./images/assets/grass trim.png");
 loadSprite("lamp", "./images/assets/lamp.png");
+loadSprite("ghost", "./images/sprites/ghost.png");
+loadSprite("arrow", "./images/assets/arrow.png");
 
 loadSpriteAtlas("./images/sprites/capybara.png", {
 	'capy': {
@@ -174,10 +179,20 @@ loadSpriteAtlas("./images/assets/new tag.png", {
 	},
 });
 
+//font
 loadFont("pixelify", "./images/assets/fonts/PixelifySans-Medium.ttf")
 
 // define gravity
 setGravity(0)
+
+function backgroundMusic(){
+	//background music
+	play("jungle", {
+		loop: true,
+	});
+}
+
+//backgroundMusic();
 
 scene("start", () => {
 
@@ -393,11 +408,6 @@ scene("game", () => {
 	// define gravity
 	setGravity(0)
 
-	//background music
-	//play("jungle", {
-		//loop: true,
-	//});
-
 	let obsTileAmount = Math.ceil(height() / 120);
 	let timing = obsTileAmount * 0.1625;
 
@@ -418,6 +428,33 @@ scene("game", () => {
 	  scale(1),
 	  fixed()
 	]);
+
+	//start round info
+	add([
+		text( "Click or Press Space to Jump",{
+			font: "Pixelify"
+		}),
+		color(255,255,255),
+		pos(width()/4, height()/6),
+		scale(1.4),
+		anchor("left"),
+		"ghost",
+	])
+
+	add([
+		pos(width() / 2.4, height() / 3),
+		sprite("arrow"),
+		z(1),
+		"ghost",
+	])
+
+
+	add([
+		pos(width() / 2.1, height() / 3),
+		sprite("ghost"),
+		z(1),
+		"ghost",
+	])
 
 	//initialize floor and trim
 	let tileAmount = width() / 48;
@@ -481,10 +518,12 @@ scene("game", () => {
 			player.jump();
 			player.play('fly')
 			play('flap');
+			removeGhosts();
 		} else {
 			player.jump();
 			player.play('fly')
 			play('flap');
+			removeGhosts();
 		}
 	});
 
@@ -495,10 +534,12 @@ scene("game", () => {
 			player.jump();
 			player.play('fly');
 			play('flap');
+			removeGhosts();
 		} else {
 			player.jump();
 			player.play('fly');
 			play('flap');
+			removeGhosts();
 		}
 	});
 
@@ -509,12 +550,18 @@ scene("game", () => {
 			player.jump();
 			player.play('fly')
 			play('flap');
+			removeGhosts();
 		} else {
 			player.jump();
 			player.play('fly')
 			play('flap');
+			removeGhosts();
 		}
 	});
+
+	function removeGhosts(){
+		destroyAll("ghost");
+	}
 
 	function spawnObsactle(){
 		if(player.moved === true){
