@@ -623,9 +623,9 @@ scene("game", () => {
 			font: "Pixelify"
 		}),
 		color(255,255,255),
-		pos(width()/4, height()/4),
+		pos(width()/2.4, height()/4),
 		scale(1.4),
-		anchor("left"),
+		anchor("center"),
 		"ghost",
 	])
 
