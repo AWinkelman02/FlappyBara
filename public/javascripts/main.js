@@ -33,6 +33,7 @@ loadSprite("grass trim", "./images/assets/grass trim.png");
 loadSprite("lamp", "./images/assets/lamp.png");
 loadSprite("ghost", "./images/sprites/ghost.png");
 loadSprite("arrow", "./images/assets/arrow.png");
+loadSprite("jump lines", "./images/assets/jump lines.png");
 
 loadSpriteAtlas("./images/sprites/capybara.png", {
 	'capy': {
@@ -179,6 +180,37 @@ loadSpriteAtlas("./images/assets/new tag.png", {
 	},
 });
 
+loadSpriteAtlas("./images/assets/ui keys.png", {
+	's': {
+		x: 0,
+		y: 0,
+		width: 32,
+		height: 32,
+		sliceX: 1,
+	},
+	'sx': {
+		x: 32,
+		y: 0,
+		width: 32,
+		height: 32,
+		sliceX: 1,
+	},
+	'm': {
+		x: 64,
+		y: 0,
+		width: 32,
+		height: 32,
+		sliceX: 1,
+	},
+	'mx': {
+		x: 96,
+		y: 0,
+		width: 32,
+		height: 32,
+		sliceX: 1,
+	},
+});
+
 //font
 loadFont("pixelify", "./images/assets/fonts/PixelifySans-Medium.ttf")
 
@@ -194,9 +226,87 @@ function backgroundMusic(){
 
 //backgroundMusic();
 
+//button sound effect
+let playSound = true;
+let playMusic = true;
+
+function buttonSoundEffect(){
+	if (playSound === true) {
+		play("click");
+	}
+}
+
+function flySoundEffect(){
+	if (playSound === true) {
+		play("flap");
+	}
+}
+
+function uiKeysSounds(){
+	const sfx = add([
+		pos(80, height() - 120),
+		sprite("s"),
+		area(),
+		z(101),
+	])
+
+	const sfxX = add([
+		pos(80, height() - 120),
+		sprite("sx"),
+		area(),
+		z(101),
+	])
+
+	add([		
+		text("Mute Sounds", {
+			font: "Pixelify"
+		}),
+		//anchor("left"),
+		color(255, 255, 255),
+		pos(122, height() - 120),
+		z(101),
+	])
+
+	if(playSound === true){
+		readd(sfx)
+	} else {
+		readd(sfxX)
+	}
+}
+
+function uiKeysMusic(){
+	const music = add([
+		pos(80, height() - 162),
+		sprite("m"),
+		area(),
+		z(101),
+	])
+
+	const musicX = add([
+		pos(80, height() - 162),
+		sprite("mx"),
+		area(),
+		z(101),
+	])
+
+	add([		
+		text("Mute Music", {
+			font: "Pixelify"
+		}),
+		//anchor("left"),
+		color(255, 255, 255),
+		pos(122, height() - 162),
+		z(101),
+	])
+
+	if(playMusic === true){
+		readd(music)
+	} else {
+		readd(musicX)
+	}
+}
+
 scene("start", () => {
-
-
 	onUpdate(() => setCursor("default"));
 
 	add([
@@ -206,6 +316,32 @@ scene("start", () => {
 		scale(1),
 		fixed()
 	]);
+
+	//sound effect and music ui
+	uiKeysSounds();
+	uiKeysMusic();
+
+	//sound toggle
+	onKeyPress('s', () => {
+		if(playSound === true){
+			playSound = false;
+			uiKeysSounds();
+		} else {
+			playSound = true;
+			uiKeysSounds();
+		}
+	});
+
+	//music toggle
+	onKeyPress('m', () => {
+		if(playMusic === true){
+			playMusic = false;
+			uiKeysMusic();
+		} else {
+			playMusic = true;
+			uiKeysMusic();
+		}
+	});
 
 	add([
 		sprite("title"),
@@ -245,7 +381,7 @@ scene("start", () => {
 
 	btnStart.onClick(() => {
 		go("game");
-		play("click");
+		buttonSoundEffect();
 	})
 
 	const btnLeader = add([
@@ -277,7 +413,7 @@ scene("start", () => {
 
 	btnLeader.onClick(() => {
 		go("scoreboard");
-		play("click");
+		buttonSoundEffect();
 	})
 });
 
@@ -310,6 +446,32 @@ scene("scoreboard", () => {
 		fixed()
 	]);
 
+	//sound effect and music ui
+	uiKeysSounds();
+	uiKeysMusic();
+
+	//sound toggle
+	onKeyPress('s', () => {
+		if(playSound === true){
+			playSound = false;
+			uiKeysSounds();
+		} else {
+			playSound = true;
+			uiKeysSounds();
+		}
+	});
+
+	//music toggle
+	onKeyPress('m', () => {
+		if(playMusic === true){
+			playMusic = false;
+			uiKeysMusic();
+		} else {
+			playMusic = true;
+			uiKeysMusic();
+		}
+	});
+
 	const btnHome = add([
 		sprite("btn2"),
 		pos(width() / 8, height() / 7),
@@ -340,7 +502,7 @@ scene("scoreboard", () => {
 
 	btnHome.onClick(() => {
 		go("start");
-		play("click");
+		buttonSoundEffect();
 	})
 
 	//medals
@@ -429,13 +591,39 @@ scene("game", () => {
 	  fixed()
 	]);
 
+	//sound effect and music ui
+	uiKeysSounds();
+	uiKeysMusic();
+
+	//sound toggle
+	onKeyPress('s', () => {
+		if(playSound === true){
+			playSound = false;
+			uiKeysSounds();
+		} else {
+			playSound = true;
+			uiKeysSounds();
+		}
+	});
+
+	//music toggle
+	onKeyPress('m', () => {
+		if(playMusic === true){
+			playMusic = false;
+			uiKeysMusic();
+		} else {
+			playMusic = true;
+			uiKeysMusic();
+		}
+	});
+
 	//start round info
 	add([
 		text( "Click or Press Space to Jump",{
 			font: "Pixelify"
 		}),
 		color(255,255,255),
-		pos(width()/4, height()/6),
+		pos(width()/4, height()/4),
 		scale(1.4),
 		anchor("left"),
 		"ghost",
@@ -455,6 +643,14 @@ scene("game", () => {
 		z(1),
 		"ghost",
 	])
+
+	add([
+		pos(width() / 2.1 - 20, height() / 3 + 68),
+		sprite("jump lines"),
+		z(1),
+		"ghost",
+	])
+
 
 	//initialize floor and trim
 	let tileAmount = width() / 48;
@@ -517,12 +713,12 @@ scene("game", () => {
 			player.moved = true;
 			player.jump();
 			player.play('fly')
-			play('flap');
+			flySoundEffect();
 			removeGhosts();
 		} else {
 			player.jump();
 			player.play('fly')
-			play('flap');
+			flySoundEffect();
 			removeGhosts();
 		}
 	});
@@ -533,12 +729,12 @@ scene("game", () => {
 			player.moved = true;
 			player.jump();
 			player.play('fly');
-			play('flap');
+			flySoundEffect();
 			removeGhosts();
 		} else {
 			player.jump();
 			player.play('fly');
-			play('flap');
+			flySoundEffect();
 			removeGhosts();
 		}
 	});
@@ -549,12 +745,12 @@ scene("game", () => {
 			player.moved = true;
 			player.jump();
 			player.play('fly')
-			play('flap');
+			flySoundEffect();
 			removeGhosts();
 		} else {
 			player.jump();
 			player.play('fly')
-			play('flap');
+			flySoundEffect();
 			removeGhosts();
 		}
 	});
@@ -686,6 +882,32 @@ scene("lose", (score, currBest) => {
 		fixed()
 	]);
 
+	//sound effect and music ui
+	uiKeysSounds();
+	uiKeysMusic();
+
+	//sound toggle
+	onKeyPress('s', () => {
+		if(playSound === true){
+			playSound = false;
+			uiKeysSounds();
+		} else {
+			playSound = true;
+			uiKeysSounds();
+		}
+	});
+
+	//music toggle
+	onKeyPress('m', () => {
+		if(playMusic === true){
+			playMusic = false;
+			uiKeysMusic();
+		} else {
+			playMusic = true;
+			uiKeysMusic();
+		}
+	});
+
 	const menu = add([
 		sprite("scorecard"),
 		//rect(width() / 3, height() / 3, { radius: 8 }),
@@ -807,7 +1029,7 @@ scene("lose", (score, currBest) => {
 	btnSubmit.onClick(() => {
 		postLeaderboardData(txt, score);
 		go("scoreboard");
-		play("click");
+		buttonSoundEffect();
 	})
 
 	const btnRestart = add([
@@ -838,7 +1060,7 @@ scene("lose", (score, currBest) => {
  
 	btnRestart.onClick(() => {
 		go("game");
-		play("click");
+		buttonSoundEffect();
 	})
 
 	const btnHome = add([
@@ -869,7 +1091,7 @@ scene("lose", (score, currBest) => {
 
 	btnHome.onClick(() => {
 		go("start");
-		play("click");
+		buttonSoundEffect();
 	})
 })
 
