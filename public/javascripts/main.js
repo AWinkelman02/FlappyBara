@@ -14,7 +14,6 @@ kaboom();
 setBackground(102, 207, 46)
 
 //sounds
-loadSound("jungle", "./images/sounds/jungle_prince.mp3");
 loadSound("flap", "./images/sounds/flap.mp3");
 loadSound("click", "./images/sounds/click.wav");
 
@@ -217,18 +216,8 @@ loadFont("pixelify", "./images/assets/fonts/PixelifySans-Medium.ttf")
 // define gravity
 setGravity(0)
 
-function backgroundMusic(){
-	//background music
-	play("jungle", {
-		loop: true,
-	});
-}
-
-//backgroundMusic();
-
 //button sound effect
 let playSound = true;
-let playMusic = true;
 
 function buttonSoundEffect(){
 	if (playSound === true) {
@@ -274,38 +263,6 @@ function uiKeysSounds(){
 	}
 }
 
-function uiKeysMusic(){
-	const music = add([
-		pos(80, height() - 162),
-		sprite("m"),
-		area(),
-		z(101),
-	])
-
-	const musicX = add([
-		pos(80, height() - 162),
-		sprite("mx"),
-		area(),
-		z(101),
-	])
-
-	add([		
-		text("Mute Music", {
-			font: "Pixelify"
-		}),
-		//anchor("left"),
-		color(255, 255, 255),
-		pos(122, height() - 162),
-		z(101),
-	])
-
-	if(playMusic === true){
-		readd(music)
-	} else {
-		readd(musicX)
-	}
-}
-
 scene("start", () => {
 	onUpdate(() => setCursor("default"));
 
@@ -319,7 +276,6 @@ scene("start", () => {
 
 	//sound effect and music ui
 	uiKeysSounds();
-	uiKeysMusic();
 
 	//sound toggle
 	onKeyPress('s', () => {
@@ -329,17 +285,6 @@ scene("start", () => {
 		} else {
 			playSound = true;
 			uiKeysSounds();
-		}
-	});
-
-	//music toggle
-	onKeyPress('m', () => {
-		if(playMusic === true){
-			playMusic = false;
-			uiKeysMusic();
-		} else {
-			playMusic = true;
-			uiKeysMusic();
 		}
 	});
 
@@ -448,7 +393,6 @@ scene("scoreboard", () => {
 
 	//sound effect and music ui
 	uiKeysSounds();
-	uiKeysMusic();
 
 	//sound toggle
 	onKeyPress('s', () => {
@@ -458,17 +402,6 @@ scene("scoreboard", () => {
 		} else {
 			playSound = true;
 			uiKeysSounds();
-		}
-	});
-
-	//music toggle
-	onKeyPress('m', () => {
-		if(playMusic === true){
-			playMusic = false;
-			uiKeysMusic();
-		} else {
-			playMusic = true;
-			uiKeysMusic();
 		}
 	});
 
@@ -593,7 +526,6 @@ scene("game", () => {
 
 	//sound effect and music ui
 	uiKeysSounds();
-	uiKeysMusic();
 
 	//sound toggle
 	onKeyPress('s', () => {
@@ -603,17 +535,6 @@ scene("game", () => {
 		} else {
 			playSound = true;
 			uiKeysSounds();
-		}
-	});
-
-	//music toggle
-	onKeyPress('m', () => {
-		if(playMusic === true){
-			playMusic = false;
-			uiKeysMusic();
-		} else {
-			playMusic = true;
-			uiKeysMusic();
 		}
 	});
 
@@ -881,7 +802,7 @@ scene("lose", (score, currBest) => {
 		scale(1),
 		fixed()
 	]);
-
+/* 
 	//sound effect and music ui
 	uiKeysSounds();
 	uiKeysMusic();
@@ -907,7 +828,7 @@ scene("lose", (score, currBest) => {
 			uiKeysMusic();
 		}
 	});
-
+*/
 	const menu = add([
 		sprite("scorecard"),
 		//rect(width() / 3, height() / 3, { radius: 8 }),

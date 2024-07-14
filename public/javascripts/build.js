@@ -17633,7 +17633,6 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
   var OFFSET_OFFSCREEN2 = 95;
   zo();
   setBackground(102, 207, 46);
-  loadSound("jungle", "./images/sounds/jungle_prince.mp3");
   loadSound("flap", "./images/sounds/flap.mp3");
   loadSound("click", "./images/sounds/click.wav");
   loadSprite("background", "./images/assets/background.png");
@@ -17824,7 +17823,6 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
   loadFont("pixelify", "./images/assets/fonts/PixelifySans-Medium.ttf");
   setGravity(0);
   var playSound = true;
-  var playMusic = true;
   function buttonSoundEffect() {
     if (playSound === true) {
       play("click");
@@ -17863,34 +17861,6 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
       readd(sfxX);
     }
   }
-  function uiKeysMusic() {
-    const music = add([
-      pos(80, height() - 162),
-      sprite("m"),
-      area(),
-      z(101)
-    ]);
-    const musicX = add([
-      pos(80, height() - 162),
-      sprite("mx"),
-      area(),
-      z(101)
-    ]);
-    add([
-      text("Mute Music", {
-        font: "Pixelify"
-      }),
-      //anchor("left"),
-      color(255, 255, 255),
-      pos(122, height() - 162),
-      z(101)
-    ]);
-    if (playMusic === true) {
-      readd(music);
-    } else {
-      readd(musicX);
-    }
-  }
   scene("start", () => {
     onUpdate(() => setCursor("default"));
     add([
@@ -17901,7 +17871,6 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
       fixed()
     ]);
     uiKeysSounds();
-    uiKeysMusic();
     onKeyPress("s", () => {
       if (playSound === true) {
         playSound = false;
@@ -17909,15 +17878,6 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
       } else {
         playSound = true;
         uiKeysSounds();
-      }
-    });
-    onKeyPress("m", () => {
-      if (playMusic === true) {
-        playMusic = false;
-        uiKeysMusic();
-      } else {
-        playMusic = true;
-        uiKeysMusic();
       }
     });
     add([
@@ -18007,7 +17967,6 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
       fixed()
     ]);
     uiKeysSounds();
-    uiKeysMusic();
     onKeyPress("s", () => {
       if (playSound === true) {
         playSound = false;
@@ -18015,15 +17974,6 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
       } else {
         playSound = true;
         uiKeysSounds();
-      }
-    });
-    onKeyPress("m", () => {
-      if (playMusic === true) {
-        playMusic = false;
-        uiKeysMusic();
-      } else {
-        playMusic = true;
-        uiKeysMusic();
       }
     });
     const btnHome = add([
@@ -18126,7 +18076,6 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
       fixed()
     ]);
     uiKeysSounds();
-    uiKeysMusic();
     onKeyPress("s", () => {
       if (playSound === true) {
         playSound = false;
@@ -18134,15 +18083,6 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
       } else {
         playSound = true;
         uiKeysSounds();
-      }
-    });
-    onKeyPress("m", () => {
-      if (playMusic === true) {
-        playMusic = false;
-        uiKeysMusic();
-      } else {
-        playMusic = true;
-        uiKeysMusic();
       }
     });
     add([
@@ -18369,26 +18309,6 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
       scale(1),
       fixed()
     ]);
-    uiKeysSounds();
-    uiKeysMusic();
-    onKeyPress("s", () => {
-      if (playSound === true) {
-        playSound = false;
-        uiKeysSounds();
-      } else {
-        playSound = true;
-        uiKeysSounds();
-      }
-    });
-    onKeyPress("m", () => {
-      if (playMusic === true) {
-        playMusic = false;
-        uiKeysMusic();
-      } else {
-        playMusic = true;
-        uiKeysMusic();
-      }
-    });
     const menu = add([
       sprite("scorecard"),
       //rect(width() / 3, height() / 3, { radius: 8 }),
