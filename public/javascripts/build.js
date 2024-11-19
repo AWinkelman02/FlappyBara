@@ -17623,6 +17623,13 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
       }
     });
   }
+  async function getLeaderboardData() {
+    fetch("/data", { mode: "cors" }).then((response) => {
+      return response.json();
+    }).then((response) => {
+      console.log(response);
+    });
+  }
 
   // public/javascripts/main.js
   var import_express_validator = __toESM(require_lib());
@@ -17631,6 +17638,9 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
   var CEILING = -130;
   var SPEED2 = 300;
   var OFFSET_OFFSCREEN2 = 95;
+  document.addEventListener("DOMContentLoaded", () => {
+    getLeaderboardData();
+  });
   zo();
   setBackground(102, 207, 46);
   loadSound("flap", "./images/sounds/flap.mp3");

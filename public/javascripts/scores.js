@@ -95,5 +95,16 @@ async function postLeaderboardData(name, score){
     });
 }
 
+//post leaderboard
+async function getLeaderboardData(){
+    fetch('/data', {mode: 'cors'})
+    .then((response)=>{
+        return(response.json());
+    })
+    .then((response)=>{
+        console.log(response)
+    })
+}
 
-export { compareScore, saveBestScore, getBestScore, checkMedal, getMedal, medalList, postLeaderboardData };
+
+export { compareScore, saveBestScore, getBestScore, checkMedal, getMedal, medalList, postLeaderboardData, getLeaderboardData };

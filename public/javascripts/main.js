@@ -1,6 +1,6 @@
 import kaboom from "kaboom"
 import { bambooBaseType, bambooLeafType, createLamp } from "./bamboo.js"
-import { compareScore, getBestScore, checkMedal, getMedal, medalList, postLeaderboardData } from "./scores.js"
+import { compareScore, getBestScore, checkMedal, getMedal, medalList, postLeaderboardData, getLeaderboardData } from "./scores.js"
 import { header } from "express-validator";
 
 const FLOOR_HEIGHT = 48;
@@ -8,6 +8,10 @@ const TILE_HEIGHT = 120;
 const CEILING = -130;
 const SPEED = 300;
 const OFFSET_OFFSCREEN = 95;
+
+document.addEventListener('DOMContentLoaded', ()=>{
+	getLeaderboardData()
+});
 
 kaboom();
 
