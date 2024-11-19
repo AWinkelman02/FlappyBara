@@ -381,6 +381,7 @@ scene("scoreboard", () => {
 		})
 	}
 
+	
 	getSBData();
 
 	add([
